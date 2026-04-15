@@ -1,0 +1,269 @@
+<section class="a-blog-detail">
+  <style>
+    .a-blog-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+    }
+
+    .a-toc-box {
+      position: sticky;
+      top: {{ section.settings.toc_top_offset }}px;
+      background: #f7f7f7;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    /* TOC DROPDOWN */
+    .a-toc-header {
+      display: flex;
+      justify-content: space-between;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .a-toc-content {
+      display: none;
+      margin-top: 10px;
+    }
+
+    .a-toc-content.a-open {
+      display: block;
+    }
+
+    #a-toc-list,
+    .a-cta-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #a-toc-list li,
+    .a-cta-list li {
+      margin: 6px 0;
+    }
+
+    a {
+      text-decoration: none;
+      cursor: pointer;
+      color: #333;
+      font-size: 14px;
+      display: block;
+    }
+
+    a:hover {
+      color: #007acc;
+    }
+
+    .a-active {
+      color: #007acc !important;
+      font-weight: 600;
+    }
+
+    .a-toc-cta {
+      margin-top: 15px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .a-btn-primary {
+      display: block;
+      text-align: center;
+      background: #007acc;
+      color: #fff;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    .a-blog-content {
+      max-width: 800px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    @media (max-width: 768px) {
+      .a-blog-layout {
+        grid-template-columns: 1fr;
+      }
+      .a-toc {
+        display: none;
+      }
+    }
+  </style>
+
+  <div class="page-width a-blog-layout">
+    <!-- TOC -->
+    <aside class="a-toc">
+      <div class="a-toc-box">
+        <!-- DROPDOWN HEADER -->
+        <div class="a-toc-header" id="a-toc-toggle">
+          <span>{{ section.settings.toc_heading }}</span>
+          <span>▾</span>
+        </div>
+
+        <!-- DROPDOWN CONTENT -->
+        <div class="a-toc-content a-open" id="a-toc-content">
+          <!-- TOC LIST -->
+          <ul id="a-toc-list"></ul>
+
+          <!-- CTA -->
+          <div class="a-toc-cta">
+            <h4>{{ section.settings.cta_heading }}</h4>
+
+            <ul class="a-cta-list" id="a-cta-list">
+              {% assign points = section.settings.cta_points | newline_to_br | split: '<br />' %}
+              {% for point in points %}
+                <li>
+                  <a href="#" class="a-cta-link">{{ point }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+
+            {% if section.settings.show_cta_button %}
+              <a href="{{ section.settings.cta_button_link }}" class="a-btn-primary">
+                {{ section.settings.cta_button_text }}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <article class="a-blog-content">
+      <h1>{{ article.title }}</h1>
+
+      {% if article.image %}
+        <img width="" height="" src="{{ article.image | image_url: width: 1200 }}" class="a-blog-image">
+      {% endif %}
+
+      <div class="rte" id="a-blog-content">
+        {{ article.content }}
+      </div>
+    </article>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const content = document.querySelector('#a-blog-content');
+      const tocList = document.querySelector('#a-toc-list');
+      const ctaLinks = document.querySelectorAll('.a-cta-link');
+      const tocToggle = document.querySelector('#a-toc-toggle');
+      const tocContent = document.querySelector('#a-toc-content');
+
+      if (!content || !tocList) return;
+
+      const headings = content.querySelectorAll('h2, h3');
+      let map = [];
+
+      headings.forEach((heading, i) => {
+        const id = 'a-heading-' + i;
+        heading.id = id;
+
+        // TOC
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#' + id;
+        a.innerText = heading.innerText;
+        li.appendChild(a);
+        tocList.appendChild(li);
+
+        // CTA mapping
+        if (ctaLinks[i]) {
+          ctaLinks[i].href = '#' + id;
+          map.push({ link: ctaLinks[i], target: heading });
+        }
+
+        map.push({ link: a, target: heading });
+      });
+
+      // DROPDOWN TOGGLE
+      tocToggle.addEventListener('click', () => {
+        tocContent.classList.toggle('a-open');
+      });
+
+      // SCROLL SPY
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              document.querySelectorAll('.a-active').forEach((el) => el.classList.remove('a-active'));
+
+              map.forEach((item) => {
+                if (item.target === entry.target) {
+                  item.link.classList.add('a-active');
+                }
+              });
+            }
+          });
+        },
+        {
+          rootMargin: '-40% 0px -50% 0px',
+        }
+      );
+
+      headings.forEach((h) => observer.observe(h));
+    });
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "A Blog Detail",
+  "settings": [
+    {
+      "type": "text",
+      "id": "toc_heading",
+      "default": "Table of Contents",
+      "label": "TOC Heading"
+    },
+    {
+      "type": "text",
+      "id": "cta_heading",
+      "default": "Get started today!",
+      "label": "CTA Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "cta_points",
+      "default": "✔ Build on any device\n✔ Optimized templates\n✔ Easy customization",
+      "label": "CTA Points"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta_button",
+      "default": true,
+      "label": "Show CTA Button"
+    },
+    {
+      "type": "text",
+      "id": "cta_button_text",
+      "default": "Start Now",
+      "label": "CTA Button Text"
+    },
+    {
+      "type": "url",
+      "id": "cta_button_link",
+      "label": "CTA Button Link"
+    },
+    {
+      "type": "range",
+      "id": "toc_top_offset",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "default": 100,
+      "label": "Sticky Offset"
+    }
+  ],
+  "presets": [
+    {
+      "name": "A Blog Detail"
+    }
+  ]
+}
+{% endschema %}
