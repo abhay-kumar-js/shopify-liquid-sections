@@ -1,0 +1,95 @@
+<section class="a-breadcrumbs-section">
+  <style>
+    .a-breadcrumbs-section {
+      padding: 12px 16px;
+    }
+
+    .a-breadcrumbs-wrapper {
+      max-width: 1800px;
+      margin: auto;
+    }
+
+    .a-breadcrumbs {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+    }
+
+    .a-breadcrumbs a {
+      font-size: 12px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #666;
+      transition: color 0.2s ease;
+    }
+
+    .a-breadcrumbs a:hover {
+      color: #000;
+    }
+
+    .a-breadcrumb-separator {
+      color: #999;
+    }
+
+    .a-breadcrumb-current {
+      color: #000;
+      font-weight: 500;
+    }
+
+    @media (max-width: 600px) {
+      .a-breadcrumbs {
+        font-size: 12px;
+        text-transform: uppercase;
+      }
+    }
+  </style>
+
+  <div class="a-breadcrumbs-wrapper">
+    <nav class="a-breadcrumbs" role="navigation" aria-label="breadcrumbs">
+      <a href="{{ routes.root_url }}">Home</a>
+
+      {% if template contains 'collection' and collection %}
+        <span class="a-breadcrumb-separator">/</span>
+        <span class="a-breadcrumb-current">{{ collection.title }}</span>
+
+      {% elsif template contains 'product' %}
+        {% if collection %}
+          <span class="a-breadcrumb-separator">/</span>
+          <a href="{{ collection.url }}">{{ collection.title }}</a>
+        {% endif %}
+
+        <span class="a-breadcrumb-separator">/</span>
+        <span class="a-breadcrumb-current">{{ product.title }}</span>
+
+      {% elsif template contains 'page' %}
+        <span class="a-breadcrumb-separator">/</span>
+        <span class="a-breadcrumb-current">{{ page.title }}</span>
+
+      {% elsif template contains 'blog' %}
+        <span class="a-breadcrumb-separator">/</span>
+        <span class="a-breadcrumb-current">{{ blog.title }}</span>
+
+      {% elsif template contains 'article' %}
+        <span class="a-breadcrumb-separator">/</span>
+        <a href="{{ blog.url }}">{{ blog.title }}</a>
+
+        <span class="a-breadcrumb-separator">/</span>
+        <span class="a-breadcrumb-current">{{ article.title }}</span>
+      {% endif %}
+    </nav>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "A Breadcrumbs",
+  "settings": [],
+  "presets": [
+    {
+      "name": "A Breadcrumbs"
+    }
+  ]
+}
+{% endschema %}
