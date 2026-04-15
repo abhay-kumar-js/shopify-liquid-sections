@@ -2,342 +2,338 @@
 <html lang="en">
 
 <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-      <title>Feature Collection</title>
+  <title>Feature Collection</title>
 
-      <style>
-            /* SECTION */
+  <style>
+    /* SECTION */
 
-            .fragrance-section {
-                  padding: 40px 16px;
-            }
+    .fragrance-section {
+      padding: 40px 16px;
+    }
 
-            .page-width {
-                  max-width: 1400px;
-                  margin: auto;
-            }
+    .page-width {
+      max-width: 1400px;
+      margin: auto;
+    }
 
-            /* HEADER */
+    /* HEADER */
 
-            .section-title-container {
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                  margin-bottom: 30px;
-                  flex-wrap: wrap;
-            }
+    .section-title-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
 
-            /* TITLE */
+    /* TITLE */
 
-            .section-title {
-                  font-size: 34px;
-                  font-weight: 600;
-                  margin: 0;
-            }
+    .section-title {
+      font-size: 34px;
+      font-weight: 600;
+      margin: 0;
+    }
 
-            .section-title span {
-                  color: #f07d32;
-            }
+    .section-title span {
+      color: #f07d32;
+    }
 
-            /* NAV BUTTON */
+    /* NAV BUTTON */
 
-            .nav-button {
-                  position: relative;
-                  padding: 10px 22px;
-                  border: 1px solid #000;
-                  text-decoration: none;
-                  color: #000;
-                  font-size: 14px;
-                  overflow: hidden;
-                  z-index: 1;
-            }
+    .nav-button {
+      position: relative;
+      padding: 10px 22px;
+      border: 1px solid #000;
+      text-decoration: none;
+      color: #000;
+      font-size: 14px;
+      overflow: hidden;
+      z-index: 1;
+    }
 
-            .nav-button::before {
-                  content: "";
-                  position: absolute;
-                  left: 0;
-                  bottom: 0;
-                  width: 100%;
-                  height: 0%;
-                  background: #000;
-                  transition: height .35s ease;
-                  z-index: -1;
-            }
+    .nav-button::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 0%;
+      background: #000;
+      transition: height .35s ease;
+      z-index: -1;
+    }
 
-            .nav-button:hover {
-                  color: #fff;
-            }
+    .nav-button:hover {
+      color: #fff;
+    }
 
-            .nav-button:hover::before {
-                  height: 100%;
-            }
+    .nav-button:hover::before {
+      height: 100%;
+    }
 
-            /* GRID */
+    /* GRID */
 
-            .fragrance-grid {
-                  display: grid;
-                  grid-template-columns: repeat(4, 1fr);
-                  gap: 25px;
-            }
+    .fragrance-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 25px;
+    }
 
-            /* CARD */
+    /* CARD */
 
-            .fragrance-card {
-                  background: #efefef;
-                  border-radius: 16px;
-                  overflow: hidden;
-                  text-decoration: none;
-                  color: inherit;
-                  display: block;
-            }
+    .fragrance-card {
+      background: #efefef;
+      border-radius: 16px;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
 
-            /* IMAGE */
+    /* IMAGE */
 
-            .product-media {
-                  width: 100%;
-                  aspect-ratio: 1/1;
-                  overflow: hidden;
-            }
+    .product-media {
+      width: 100%;
+      aspect-ratio: 1/1;
+      overflow: hidden;
+    }
 
-            .product-media img {
-                  width: 100%;
-                  height: 100%;
-                  object-fit: cover;
-                  transition: transform .6s ease;
-            }
+    .product-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .6s ease;
+    }
 
-            /* IMAGE ZOOM */
+    /* IMAGE ZOOM */
 
-            .fragrance-card:hover .product-media img {
-                  transform: scale(1.1);
-            }
+    .fragrance-card:hover .product-media img {
+      transform: scale(1.1);
+    }
 
-            /* INFO */
+    /* INFO */
 
-            .product-info {
-                  padding: 12px 10px;
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-            }
+    .product-info {
+      padding: 12px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-            /* TITLE */
+    /* TITLE */
 
-            .product-title {
-                  font-size: 20px;
-                  margin: 0;
-                  position: relative;
-                  display: inline-block;
-            }
+    .product-title {
+      font-size: 20px;
+      margin: 0;
+      position: relative;
+      display: inline-block;
+    }
 
-            /* UNDERLINE */
+    /* UNDERLINE */
 
-            .product-title::after {
-                  content: "";
-                  position: absolute;
-                  left: 0;
-                  bottom: -4px;
-                  width: 0%;
-                  height: 2px;
-                  background: #000;
-                  transition: width .35s ease;
-            }
+    .product-title::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 0%;
+      height: 2px;
+      background: #000;
+      transition: width .35s ease;
+    }
 
-            .fragrance-card:hover .product-title::after {
-                  width: 100%;
-            }
+    .fragrance-card:hover .product-title::after {
+      width: 100%;
+    }
 
-            .product-description {
-                  font-size: 14px;
-                  color: #666;
-                  margin-top: 5px;
-            }
+    .product-description {
+      font-size: 14px;
+      color: #666;
+      margin-top: 5px;
+    }
 
-            /* ARROW */
+    /* ARROW */
 
-            .arrow {
-                  font-size: 20px;
-                  transform: rotate(45deg);
-                  transition: transform .35s ease;
-            }
+    .arrow {
+      font-size: 20px;
+      transform: rotate(45deg);
+      transition: transform .35s ease;
+    }
 
-            .fragrance-card:hover .arrow {
-                  transform: rotate(0deg);
-            }
+    .fragrance-card:hover .arrow {
+      transform: rotate(0deg);
+    }
 
-            /* SLIDER MODE */
+    /* SLIDER MODE */
 
-            .slider-mode {
-                  display: flex;
-                  overflow-x: auto;
-                  gap: 25px;
-                  scroll-snap-type: x mandatory;
-            }
+    .slider-mode {
+      display: flex;
+      overflow-x: auto;
+      gap: 25px;
+      scroll-snap-type: x mandatory;
+    }
 
-            .slider-mode .fragrance-card {
-                  flex: 0 0 auto;
-                  min-width: 260px;
-                  scroll-snap-align: start;
-            }
+    .slider-mode .fragrance-card {
+      flex: 0 0 auto;
+      min-width: 260px;
+      scroll-snap-align: start;
+    }
 
-            /* TABLET */
+    /* TABLET */
 
-            @media(max-width:900px) {
+    @media(max-width:900px) {
 
-                  .fragrance-grid {
-                        grid-template-columns: 1fr 1fr;
-                  }
+      .fragrance-grid {
+        grid-template-columns: 1fr 1fr;
+      }
 
-                  .section-title {
-                        font-size: 30px;
-                  }
+      .section-title {
+        font-size: 30px;
+      }
 
-            }
+    }
 
-            /* MOBILE */
+    /* MOBILE */
 
-            @media(max-width:600px) {
+    @media(max-width:600px) {
 
-                  .fragrance-grid {
-                        grid-template-columns: 1fr 1fr;
-                        gap: 15px;
-                  }
+      .fragrance-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
 
-                  .section-title {
-                        font-size: 24px;
-                  }
+      .section-title {
+        font-size: 24px;
+      }
 
-                  .product-title {
-                        font-size: 16px;
-                  }
+      .product-title {
+        font-size: 16px;
+      }
 
-                  .product-description {
-                        font-size: 12px;
-                  }
+      .product-description {
+        font-size: 12px;
+      }
 
-                  .arrow {
-                        font-size: 14px;
-                  }
+      .arrow {
+        font-size: 14px;
+      }
 
-            }
-      </style>
+    }
+  </style>
 </head>
 
 
 <body>
-      <section class="fragrance-section">
+  <section class="fragrance-section">
 
-            <div class="page-width">
+    <div class="page-width">
 
-                  <div class="section-title-container">
+      <div class="section-title-container">
 
-                        <h2 class="section-title">
-                              OUR <span>FRAGRANCES</span>
-                        </h2>
+        <h2 class="section-title">
+          OUR <span>FRAGRANCES</span>
+        </h2>
 
-                        <a href="#" class="nav-button">
-                              View All
-                        </a>
+        <a href="#" class="nav-button">
+          View All
+        </a>
 
-                  </div>
-
-
-                  <div class="fragrance-grid" id="collectionGrid">
-
-                        <a href="#" class="fragrance-card">
-
-                              <div class="product-media">
-                                    <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=800"
-                                          alt="">
-                              </div>
-
-                              <div class="product-info">
-                                    <div>
-                                          <h3 class="product-title">Perfume</h3>
-                                          <p class="product-description">Luxury fragrance</p>
-                                    </div>
-                                    <div class="arrow">→</div>
-                              </div>
-
-                        </a>
+      </div>
 
 
-                        <a href="#" class="fragrance-card">
+      <div class="fragrance-grid" id="collectionGrid">
 
-                              <div class="product-media">
-                                    <img src="https://myop.in/cdn/shop/files/floral_1.webp?v=1714048608&width=1080"
-                                          alt="">
-                              </div>
+        <a href="#" class="fragrance-card">
 
-                              <div class="product-info">
-                                    <div>
-                                          <h3 class="product-title">Oud Collection</h3>
-                                          <p class="product-description">Premium scent</p>
-                                    </div>
-                                    <div class="arrow">→</div>
-                              </div>
+          <div class="product-media">
+            <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=800" alt="">
+          </div>
 
-                        </a>
-
-
-                        <a href="#" class="fragrance-card">
-
-                              <div class="product-media">
-                                    <img src="https://myop.in/cdn/shop/files/woody__oriental_1.webp?v=1714048563&width=1080"
-                                          alt="">
-                              </div>
-
-                              <div class="product-info">
-                                    <div>
-                                          <h3 class="product-title">Body Spray</h3>
-                                          <p class="product-description">Fresh aroma</p>
-                                    </div>
-                                    <div class="arrow">→</div>
-                              </div>
-
-                        </a>
-
-
-                        <a href="#" class="fragrance-card">
-
-                              <div class="product-media">
-                                    <img src="https://myop.in/cdn/shop/files/fresh_1.webp?v=1714048533&width=1080"
-                                          alt="">
-                              </div>
-
-                              <div class="product-info">
-                                    <div>
-                                          <h3 class="product-title">Luxury Set</h3>
-                                          <p class="product-description">Exclusive pack</p>
-                                    </div>
-                                    <div class="arrow">→</div>
-                              </div>
-
-                        </a>
-
-
-                  </div>
+          <div class="product-info">
+            <div>
+              <h3 class="product-title">Perfume</h3>
+              <p class="product-description">Luxury fragrance</p>
             </div>
+            <div class="arrow">→</div>
+          </div>
 
-      </section>
+        </a>
 
 
-      <script>
+        <a href="#" class="fragrance-card">
 
-            /* SWITCH GRID OR SLIDER */
+          <div class="product-media">
+            <img src="https://myop.in/cdn/shop/files/floral_1.webp?v=1714048608&width=1080" alt="">
+          </div>
 
-            const layout = "grid";
-            // change to "slider" to enable slider
+          <div class="product-info">
+            <div>
+              <h3 class="product-title">Oud Collection</h3>
+              <p class="product-description">Premium scent</p>
+            </div>
+            <div class="arrow">→</div>
+          </div>
 
-            const grid = document.getElementById("collectionGrid");
+        </a>
 
-            if (layout === "slider") {
-                  grid.classList.add("slider-mode");
-            }
 
-      </script>
+        <a href="#" class="fragrance-card">
+
+          <div class="product-media">
+            <img src="https://myop.in/cdn/shop/files/woody__oriental_1.webp?v=1714048563&width=1080" alt="">
+          </div>
+
+          <div class="product-info">
+            <div>
+              <h3 class="product-title">Body Spray</h3>
+              <p class="product-description">Fresh aroma</p>
+            </div>
+            <div class="arrow">→</div>
+          </div>
+
+        </a>
+
+
+        <a href="#" class="fragrance-card">
+
+          <div class="product-media">
+            <img src="https://myop.in/cdn/shop/files/fresh_1.webp?v=1714048533&width=1080" alt="">
+          </div>
+
+          <div class="product-info">
+            <div>
+              <h3 class="product-title">Luxury Set</h3>
+              <p class="product-description">Exclusive pack</p>
+            </div>
+            <div class="arrow">→</div>
+          </div>
+
+        </a>
+
+
+      </div>
+    </div>
+
+  </section>
+
+
+  <script>
+
+    /* SWITCH GRID OR SLIDER */
+
+    const layout = "grid";
+    // change to "slider" to enable slider
+
+    const grid = document.getElementById("collectionGrid");
+
+    if (layout === "slider") {
+      grid.classList.add("slider-mode");
+    }
+
+  </script>
 
 </body>
 
