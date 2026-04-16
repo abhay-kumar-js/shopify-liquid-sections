@@ -1,0 +1,433 @@
+<section class="a-text-section">
+  <style>
+    .a-text-section{
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    padding-left: {{ section.settings.padding_left }}px;
+    padding-right: {{ section.settings.padding_right }}px;
+    }
+
+    .a-text-container{
+    max-width: {{ section.settings.page_width }}px;
+    margin:auto;
+    }
+
+    /* WRAPPER */
+
+    .a-text-wrapper{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+    }
+
+    /* ALIGNMENTS */
+
+    .a-align-left{
+    justify-content:flex-start;
+    text-align:left;
+    }
+
+    .a-align-center{
+    justify-content:center;
+    text-align:center;
+    }
+
+    .a-align-right{
+    justify-content:flex-end;
+    text-align:right;
+    }
+
+    .a-align-space-between{
+    justify-content:space-between;
+    text-align:left;
+    }
+
+    /* TEXT BLOCK */
+
+    .a-text-content{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    max-width:700px;
+    }
+
+    /* HEADING */
+
+    .a-heading{
+    font-size: {{ section.settings.heading_size }}px;
+    font-weight:400;
+    margin:0;
+    line-height:1.2;
+    }
+
+    /* TEXT */
+
+    .a-text{
+    font-size: {{ section.settings.text_size }}px;
+    color:#555;
+    margin:0;
+    }
+
+    /* BUTTON */
+
+    .a-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    background: {{ section.settings.button_color }};
+    color: {{ section.settings.button_text_color }};
+    text-decoration:none;
+
+    padding:
+    {{ section.settings.button_padding_y }}px
+    {{ section.settings.button_padding_x }}px;
+
+    margin-top: {{ section.settings.button_margin_top }}px;
+
+    border-radius: {{ section.settings.button_radius }}px;
+
+    font-size: {{ section.settings.button_font_size }}px;
+
+    transition:all .25s ease;
+    white-space:nowrap;
+    }
+
+    .a-btn:hover{
+    opacity:.85;
+    }
+
+
+    /* MOBILE */
+
+    @media(max-width:768px){
+
+    .a-text-section{
+    padding-top: {{ section.settings.padding_top_mobile }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    padding-left: {{ section.settings.padding_left_mobile }}px;
+    padding-right: {{ section.settings.padding_right_mobile }}px;
+    }
+
+    .a-heading{
+    font-size: {{ section.settings.heading_size_mobile }}px;
+    }
+
+    .a-text{
+    font-size: {{ section.settings.text_size_mobile }}px;
+    }
+
+    .a-text-wrapper{
+    align-items:flex-start;
+    gap:16px;
+    }
+
+    .a-align-center{
+    align-items:center;
+    text-align:center;
+    }
+
+    .a-align-right{
+    align-items:flex-end;
+    text-align:right;
+    }
+
+    .a-align-space-between{
+    align-items:center;
+    }
+
+    }
+  </style>
+
+  <div class="a-text-container">
+    <div class="a-text-wrapper a-align-{{ section.settings.alignment }}">
+      <div class="a-text-content">
+        {% if section.settings.heading != blank %}
+          <h2 class="a-heading">
+            {{ section.settings.heading }}
+          </h2>
+        {% endif %}
+
+        {% if section.settings.text != blank %}
+          <p class="a-text">
+            {{ section.settings.text }}
+          </p>
+        {% endif %}
+      </div>
+
+      {% if section.settings.button_label != blank %}
+        <a href="{{ section.settings.button_link }}" class="a-btn">
+          {{ section.settings.button_label }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "A Heading / Text / Button",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Section Heading"
+    },
+
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Add your section description here."
+    },
+
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "View all"
+    },
+
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Content alignment",
+      "default": "space-between",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" },
+        { "value": "space-between", "label": "Space Between" }
+      ]
+    },
+
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size (Desktop)",
+      "min": 18,
+      "max": 80,
+      "step": 2,
+      "default": 40
+    },
+
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size (Mobile)",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "default": 28
+    },
+
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size (Desktop)",
+      "min": 12,
+      "max": 26,
+      "step": 1,
+      "default": 16
+    },
+
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Text size (Mobile)",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "default": 15
+    },
+
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Container width",
+      "min": 800,
+      "max": 1800,
+      "step": 20,
+      "default": 1200
+    },
+
+    {
+      "type": "header",
+      "content": "Padding (Desktop)"
+    },
+
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 80
+    },
+
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 80
+    },
+
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "Left",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 20
+    },
+
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "Right",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 20
+    },
+
+    {
+      "type": "header",
+      "content": "Padding (Mobile)"
+    },
+
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 40
+    },
+
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 40
+    },
+
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "Left",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 16
+    },
+
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "Right",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 16
+    },
+
+    {
+      "type": "header",
+      "content": "Button Style"
+    },
+
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button background",
+      "default": "#000000"
+    },
+
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Button font size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "default": 14
+    },
+
+    {
+      "type": "range",
+      "id": "button_padding_x",
+      "label": "Button horizontal padding",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "default": 26
+    },
+
+    {
+      "type": "range",
+      "id": "button_padding_y",
+      "label": "Button vertical padding",
+      "min": 6,
+      "max": 30,
+      "step": 1,
+      "default": 12
+    },
+
+    {
+      "type": "range",
+      "id": "button_radius",
+      "label": "Button border radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "default": 6
+    },
+
+    {
+      "type": "range",
+      "id": "button_margin_top",
+      "label": "Button top margin",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 0
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "A Heading / Text / Button"
+    }
+  ]
+}
+{% endschema %}
