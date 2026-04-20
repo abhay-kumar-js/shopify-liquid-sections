@@ -1,0 +1,305 @@
+{% comment %}
+  -------------------------
+     ✅ new codes start
+  -------------------------
+{% endcomment %}
+
+<section
+  id="corporate-order-{{ section.id }}"
+  class="corporate-order-section shapedividers_com-4715"
+>
+  <div class="contact-form aa-contact-form">
+    <form
+      id="contactForm-{{ section.id }}"
+      method="post"
+      action="/contact#contact_form"
+      accept-charset="UTF-8"
+      novalidate
+    >
+      <input type="hidden" name="form_type" value="contact">
+      <input type="hidden" name="utf8" value="✓">
+
+      {% comment %} <!-- Name --> {% endcomment %}
+      <div class="form-group">
+        <label for="name-{{ section.id }}">Name <span class="aa-required">*</span></label>
+        <input
+          type="text"
+          id="name-{{ section.id }}"
+          name="contact[name]"
+          placeholder="Your name"
+          required
+          minlength="2"
+        >
+        <small class="input-feedback" id="name-feedback-{{ section.id }}"></small>
+      </div>
+
+      {% comment %} <!-- Email --> {% endcomment %}
+      <div class="form-group">
+        <label for="email-{{ section.id }}">Email <span class="aa-required">*</span></label>
+        <input
+          type="email"
+          id="email-{{ section.id }}"
+          name="contact[email]"
+          placeholder="you@example.com"
+          required
+        >
+        <small class="input-feedback" id="email-feedback-{{ section.id }}"></small>
+      </div>
+
+      {% comment %} <!-- Phone --> {% endcomment %}
+      <div class="form-group">
+        <label for="phone-{{ section.id }}">Phone <span class="aa-required">*</span></label>
+        <div class="phone-input-wrapper" style="position:relative;">
+          <span
+            class="phone-prefix"
+            style="position:absolute;left:10px;top:38%;transform:translateY(-50%);pointer-events:none;"
+            >+91</span
+          >
+          <input
+            type="tel"
+            id="phone-{{ section.id }}"
+            name="contact[phone]"
+            placeholder="9876543210"
+            pattern="[6-9][0-9]{9}"
+            required
+            inputmode="numeric"
+            maxlength="10"
+            style="padding-left:44px;"
+          >
+        </div>
+        <small class="input-feedback" id="phone-feedback-{{ section.id }}"></small>
+      </div>
+
+      {% comment %} <!-- Items --> {% endcomment %}
+      <div class="form-group">
+        <label for="items-{{ section.id }}">Items</label>
+        <input
+          type="text"
+          id="items-{{ section.id }}"
+          name="contact[items]"
+          placeholder="Items you want to order"
+        >
+      </div>
+
+      {% comment %} <!-- Quantity --> {% endcomment %}
+      <div class="form-group">
+        <label for="quantity-{{ section.id }}">Quantity</label>
+        <input
+          type="number"
+          id="quantity-{{ section.id }}"
+          name="contact[quantity]"
+          placeholder="Qty of items"
+          min="25"
+        >
+      </div>
+
+      {% comment %} <!-- Address --> {% endcomment %}
+      <div class="form-group">
+        <label for="address-{{ section.id }}">Address</label>
+        <input
+          type="text"
+          id="address-{{ section.id }}"
+          name="contact[address]"
+          placeholder="Your address"
+        >
+      </div>
+
+      {% comment %} <!-- Message --> {% endcomment %}
+      <div class="form-group">
+        <label for="message-{{ section.id }}">Message</label>
+        <textarea
+          id="message-{{ section.id }}"
+          name="contact[body]"
+          placeholder="Your message"
+          required
+        ></textarea>
+      </div>
+
+      {% comment %} <!-- Submit --> {% endcomment %}
+      <button class="aa-form-submit-btn" type="submit" id="submitBtn-{{ section.id }}">Submit</button>
+
+      <p class="success-message" id="successMsg-{{ section.id }}" style="display:none;">
+        Form submitted successfully! Thank you for reaching out.
+      </p>
+    </form>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const id = '{{ section.id }}';
+    const form = document.getElementById('contactForm-' + id);
+    const successMsg = document.getElementById('successMsg-' + id);
+    const whatsappNumber = '919219642069'; // without '+'
+    const scriptURL =
+      'https://script.google.com/macros/s/AKfycbxw1EME9M9cSy9FvfHvcx2gMPkp1H5Dj4YaKufPRsAyon8Tf-HpbCgY3cxKZPhaCWm5Bg/exec'; // apps script url
+
+    form.addEventListener('submit', function (e) {
+      // Allow Shopify to process normally (email submission)
+      successMsg.classList.add('active');
+
+      // Collect form data
+      const name = document.getElementById('name-' + id).value.trim();
+      const email = document.getElementById('email-' + id).value.trim();
+      const phone = document.getElementById('phone-' + id).value.trim();
+      const address = document.getElementById('address-' + id).value.trim();
+      const message = document.getElementById('message-' + id).value.trim();
+      const items = document.getElementById('items-' + id).value.trim();
+      const quantity = document.getElementById('quantity-' + id).value.trim();
+
+      // Prepare WhatsApp message
+      const text = encodeURIComponent(
+        `*Bulk Order Request*\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nItems: ${items}\nQuantity: ${quantity}\nAddress: ${address}\nMessage: ${message}`
+      );
+
+      // ✅ Send data to Google Sheets (for table format)
+      fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          items,
+          quantity,
+          address,
+          message,
+        }),
+      })
+        .then(() => {
+          console.log('✅ Data sent to Google Sheets successfully.');
+        })
+        .catch((error) => {
+          console.error('❌ Error sending to Google Sheets:', error.message);
+        });
+    });
+  })();
+</script>
+
+<style>
+  .corporate-order-section { padding-block: 2rem; background: #fffefb; }
+  #corporate-order-{{ section.id }} * { box-sizing: border-box; font-family: Arial, sans-serif; }
+  .contact-form { max-width: 450px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  h2 { text-align: center; margin-bottom: 20px; color: #333; }
+  label { display: block; margin-bottom: 6px; font-weight: 600; color: #444; }
+  input, textarea { width: 100%; padding: 10px; margin-bottom: 16px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; }
+  .aa-form-submit-btn { background: #000; color: #fff; font-weight: 600; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; transition: background-color 0.3s ease; }
+  button:hover { background-color: #333; }
+  .success-message { display: none; color: green; text-align: center; font-weight: 600; margin-top: 15px; }
+  .success-message.active { display: block; }
+  .aa-required { color: red; }
+</style>
+
+{% comment %}
+  -------------------------
+     ✅ new codes start
+  -------------------------
+{% endcomment %}
+
+{% comment %}
+    -------------------------
+       ✅ old codes start
+    -------------------------
+   <section id="corporate-order-{{ section.id }}" class="corporate-order-section shapedividers_com-4715">
+    <div class="contact-form aa-contact-form">
+      <form
+        id="contactForm-{{ section.id }}"
+        method="post"
+        action="/contact#contact_form"
+        accept-charset="UTF-8"
+      >
+        <input type="hidden" name="form_type" value="contact">
+        <input type="hidden" name="utf8" value="✓">
+
+        <label for="name-{{ section.id }}">Name <span class="aa-required">*</span></label>
+        <input type="text" id="name-{{ section.id }}" name="contact[name]" placeholder="Your name" required>
+
+        <label for="email-{{ section.id }}">Email <span class="aa-required">*</span></label>
+        <input type="email" id="email-{{ section.id }}" name="contact[email]" placeholder="Your email" required>
+
+        <label for="phone-{{ section.id }}">Phone <span class="aa-required">*</span></label>
+        <input type="tel" id="phone-{{ section.id }}" name="contact[phone]" placeholder="Your phone number" required>
+
+        <label for="items-{{ section.id }}">Items</label>
+        <input type="text" id="items-{{ section.id }}" name="contact[items]" placeholder="Items you want to order">
+
+        <label for="quantity-{{ section.id }}">Quantity</label>
+        <input type="number" id="quantity-{{ section.id }}" name="contact[quantity]" placeholder="Qty of items" min="25">
+
+        <label for="address-{{ section.id }}">Address</label>
+        <input type="text" id="address-{{ section.id }}" name="contact[address]" placeholder="Your address">
+
+        <label for="message-{{ section.id }}">Message</label>
+        <textarea id="message-{{ section.id }}" name="contact[body]" placeholder="Your message" required></textarea>
+
+        <button class="aa-form-submit-btn" type="submit" id="submitBtn-{{ section.id }}">Submit</button>
+        <p class="success-message" id="successMsg-{{ section.id }}">
+          Form submitted successfully! Redirecting to WhatsApp...
+        </p>
+      </form>
+    </div>
+  </section>
+
+   <script>
+      (function () {
+        const id = '{{ section.id }}';
+        const form = document.getElementById('contactForm-' + id);
+        const successMsg = document.getElementById('successMsg-' + id);
+        const whatsappNumber = '919219642069'; // without '+'
+        const scriptURL =
+          'https://script.google.com/macros/s/AKfycbxw1EME9M9cSy9FvfHvcx2gMPkp1H5Dj4YaKufPRsAyon8Tf-HpbCgY3cxKZPhaCWm5Bg/exec'; // from Step 2
+
+        form.addEventListener('submit', function (e) {
+          // Allow Shopify to process normally (email submission)
+          successMsg.classList.add('active');
+
+          // Collect form data
+          const name = document.getElementById('name-' + id).value.trim();
+          const email = document.getElementById('email-' + id).value.trim();
+          const phone = document.getElementById('phone-' + id).value.trim();
+          const address = document.getElementById('address-' + id).value.trim();
+          const message = document.getElementById('message-' + id).value.trim();
+          const items = document.getElementById('items-' + id).value.trim();
+          const quantity = document.getElementById('quantity-' + id).value.trim();
+
+          // Prepare WhatsApp message
+          const text = encodeURIComponent(
+            `*Bulk Order Request*\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nItems: ${items}\nQuantity: ${quantity}\nAddress: ${address}\nMessage: ${message}`
+          );
+          const waLink = `https://wa.me/${whatsappNumber}?text=${text}`;
+
+          // ✅ Send data to Google Sheets (for table format)
+          fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify({
+              name,
+              email,
+              phone,
+              items,
+              quantity,
+              address,
+              message,
+            }),
+          })
+            .then(() => {
+              // ✅ Redirect to WhatsApp
+              window.open(waLink, '_blank', 'noopener,noreferrer');
+            })
+            .catch((error) => {
+              console.error('Error!', error.message);
+              window.open(waLink, '_blank', 'noopener,noreferrer');
+            });
+        });
+      })();
+    </script>
+
+  {% schema %}
+  {
+    "name": "Corporate Order Form",
+    "settings": [],
+    "presets": [{ "name": "Corporate Order Form", "category": "Contact" }]
+  }
+  {% endschema %}
+    -------------------------
+       ✅ old codes start
+    -------------------------
+{% endcomment %}
