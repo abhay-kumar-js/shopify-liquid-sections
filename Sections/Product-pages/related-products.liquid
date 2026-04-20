@@ -1,0 +1,343 @@
+{% liquid
+  assign related = product.metafields.custom.related_items.value
+%}
+
+{% if related != blank %}
+  <section class="rel-products-sec" data-slider>
+    <div class="rel-products-container">
+      <h2 class="rel-products-heading">
+        {{ section.settings.heading }}
+      </h2>
+
+      <!-- WRAPPER -->
+      <div class="rel-slider-wrapper">
+        <!-- TRACK -->
+        <div class="rel-products-row" data-track>
+          {% for item in related %}
+            <div class="rel-product-card" data-slide>
+              <a href="{{ item.url }}" class="rel-product-link">
+                {% if item.featured_image %}
+                  <div class="rel-img-wrap">
+                    <img
+                      width=""
+                      height=""
+                      src="{{ item.featured_image | image_url: width: 600 }}"
+                      alt="{{ item.title | escape }}"
+                      loading="lazy"
+                      class="rel-product-img"
+                    >
+                  </div>
+                {% endif %}
+
+                <span class="rel-product-title">
+                  {{ item.title }}
+                </span>
+                <span class="custom-price">
+                  {{ item.price | money }}
+                </span>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- DOTS -->
+      <div class="rel-slider-dots" data-dots></div>
+    </div>
+  </section>
+{% endif %}
+
+<style>
+    /* ================= SECTION ================= */
+
+    .rel-products-sec{
+      padding:60px 0;
+      background:#000;
+    }
+
+
+    /* ================= CONTAINER ================= */
+
+    .rel-products-container{
+      width:100%;
+      margin:auto;
+      text-align:center;
+      padding:0px;
+    }
+
+
+    /* ================= HEADING ================= */
+
+    .rel-products-heading{
+      color:#fff;
+      {% comment %} font-size:42px; {% endcomment %}
+      margin-bottom:40px;
+      font-family: "Bebas Neue", sans-serif;
+      font-weight:500;
+      letter-spacing:1px;
+    }
+
+
+    /* ================= DESKTOP LAYOUT ================= */
+
+    .rel-products-row{
+
+      display:flex;
+      justify-content:center;   /* KEEP CENTERED */
+      align-items:stretch;
+
+      gap:0px;
+
+      overflow:hidden;
+    }
+
+
+    /* ================= CARD ================= */
+
+    .rel-product-card{
+      width:100%;
+      {% comment %} max-width:340px; {% endcomment %}
+    }
+
+
+    /* ================= IMAGE ================= */
+
+    .rel-img-wrap{
+      width:100%;
+      aspect-ratio:1 / 1.2;
+      overflow:hidden;
+      background:#111;
+    }
+
+
+    .rel-product-img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+
+    /* ================= TITLE ================= */
+
+    .rel-product-title{
+      color:#fff;
+      margin-top:16px;
+      font-size:20px;
+      font-family: "Bebas Neue", sans-serif;
+      font-weight:500;
+      letter-spacing: .5px;
+      display: block;
+    }
+  .custom-price{
+      color:#fff;
+      font-size:16px;
+      font-family: "Bebas Neue", sans-serif;
+      font-weight:500;
+      letter-spacing: .5px;
+  }
+
+    /* ================= DOTS ================= */
+
+    .rel-slider-dots{
+
+      display:none;
+      justify-content:center;
+      gap:8px;
+
+      margin-top:20px;
+    }
+
+
+    .rel-slider-dots button{
+
+      width:8px;
+      height:8px;
+
+      border-radius:50%;
+      border:none;
+
+      background:#555;
+      cursor:pointer;
+    }
+
+
+    .rel-slider-dots button.active{
+      background:#fff;
+      transform:scale(1.2);
+    }
+
+
+
+    /* ================= MOBILE SLIDER ================= */
+
+    @media(max-width:768px){
+
+      .rel-products-heading{
+        font-size:22px;
+        font-weight:500;
+      }
+
+
+      .rel-products-row{
+
+        justify-content:flex-start; /* SLIDER MODE */
+
+        overflow-x:auto;
+        overflow-y:hidden;
+
+        scroll-snap-type:x mandatory;
+        scroll-behavior:smooth;
+
+        gap:0px;
+
+        padding-bottom:20px;
+
+        -webkit-overflow-scrolling:touch;
+      }
+
+
+      /* Scrollbar */
+
+      .rel-products-row::-webkit-scrollbar{
+        height:6px;
+      }
+
+      .rel-products-row::-webkit-scrollbar-thumb{
+        background:#888;
+        border-radius:10px;
+      }
+
+      .rel-products-row::-webkit-scrollbar-track{
+        background:#222;
+      }
+
+
+      /* Firefox */
+
+      .rel-products-row{
+        scrollbar-width:thin;
+        scrollbar-color:#888 #222;
+      }
+
+
+      .rel-product-card{
+
+        flex:0 0 75%;
+        max-width:75%;
+
+        scroll-snap-align:center;
+      }
+
+
+      .rel-slider-dots{
+        display:flex;
+      }
+
+    }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.innerWidth > 768) return;
+
+    const slider = document.querySelector('[data-slider]');
+    if (!slider) return;
+
+    const track = slider.querySelector('[data-track]');
+    const dotsWrap = slider.querySelector('[data-dots]');
+    const slides = slider.querySelectorAll('[data-slide]');
+
+    if (!track || !dotsWrap || slides.length === 0) return;
+
+    /* ============ CREATE DOTS ============ */
+
+    slides.forEach((_, i) => {
+      const btn = document.createElement('button');
+
+      if (i === 0) btn.classList.add('active');
+
+      btn.addEventListener('click', () => {
+        const slide = slides[i];
+
+        track.scrollTo({
+          left: slide.offsetLeft - (track.clientWidth / 2 - slide.clientWidth / 2),
+          behavior: 'smooth',
+        });
+      });
+
+      dotsWrap.appendChild(btn);
+    });
+
+    const dots = dotsWrap.querySelectorAll('button');
+
+    /* ============ ACTIVE DOT ============ */
+
+    function updateDots() {
+      let index = 0;
+      let min = Infinity;
+
+      slides.forEach((slide, i) => {
+        const center = slide.offsetLeft - (track.clientWidth / 2 - slide.clientWidth / 2);
+
+        const diff = Math.abs(center - track.scrollLeft);
+
+        if (diff < min) {
+          min = diff;
+          index = i;
+        }
+      });
+
+      dots.forEach((d) => d.classList.remove('active'));
+      dots[index].classList.add('active');
+    }
+
+    track.addEventListener('scroll', () => {
+      requestAnimationFrame(updateDots);
+    });
+
+    /* ============ DRAG SUPPORT ============ */
+
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    track.addEventListener('mousedown', (e) => {
+      isDown = true;
+
+      startX = e.pageX;
+      scrollLeft = track.scrollLeft;
+    });
+
+    track.addEventListener('mouseup', () => (isDown = false));
+    track.addEventListener('mouseleave', () => (isDown = false));
+
+    track.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+
+      e.preventDefault();
+
+      const walk = (e.pageX - startX) * 1.5;
+
+      track.scrollLeft = scrollLeft - walk;
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Related items",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "MORE YOU LIKE"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Related Items"
+    }
+  ]
+}
+{% endschema %}

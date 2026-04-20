@@ -1,0 +1,206 @@
+{% comment %} {{ 'video.css' | asset_url | stylesheet_tag }} {% endcomment %}
+
+{%- style -%}
+  #Video-{{ section.id }} {
+    position: relative;
+    overflow: hidden;
+
+    {% if section.settings.image_height == 'fixed' %}
+      height: {{ section.settings.fixed_height }}px;
+    {% elsif section.settings.image_height == 'adapt_image_first' and section.settings.video %}
+      aspect-ratio: {{ section.settings.video.aspect_ratio }};
+    {% endif %}
+  }
+
+  @media (max-width: 767px) {
+    #Video-{{ section.id }} {
+      {% if section.settings.image_height_mb == 'fixed' %}
+        height: {{ section.settings.fixed_height_mb }}px;
+      {% elsif section.settings.image_height_mb == 'adapt_image_first' and section.settings.video_mb %}
+        aspect-ratio: {{ section.settings.video_mb.aspect_ratio }};
+      {% endif %}
+    }
+  }
+
+  #Video-{{ section.id }} video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #Video-{{ section.id }} .video-desktop { display: block; }
+  #Video-{{ section.id }} .video-mobile { display: none; }
+
+  @media (max-width: 767px) {
+    #Video-{{ section.id }} .video-desktop { display: none; }
+    #Video-{{ section.id }} .video-mobile { display: block; }
+  }
+
+  #Video-{{ section.id }} .video-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+  }
+{%- endstyle -%}
+
+<div
+  id="Video-{{ section.id }}"
+  class="video-section"
+  color-scheme="{{ section.settings.color_scheme }}"
+>
+  {%- if section.settings.video or section.settings.video_mb -%}
+    {%- if section.settings.video -%}
+      <video class="video-desktop" autoplay muted loop playsinline preload="auto">
+        <source
+          src="{{ section.settings.video.sources[1].url | default: section.settings.video.sources[0].url }}"
+          type="video/mp4"
+        >
+      </video>
+    {%- endif -%}
+
+    {%- if section.settings.video_mb -%}
+      <video class="video-mobile" autoplay muted loop playsinline preload="auto">
+        <source
+          src="{{ section.settings.video_mb.sources[1].url | default: section.settings.video_mb.sources[0].url }}"
+          type="video/mp4"
+        >
+      </video>
+    {%- endif -%}
+
+  {%- elsif section.settings.external_video_url != blank -%}
+    <div class="video-desktop">
+      <iframe
+        src="https://www.youtube.com/embed/{{ section.settings.external_video_url.id }}?autoplay=1&mute=1&loop=1&playlist={{ section.settings.external_video_url.id }}&controls=0&playsinline=1"
+        allow="autoplay; encrypted-media"
+        allowfullscreen
+        style="width:100%; height:100%; border:0;"
+      ></iframe>
+    </div>
+  {%- endif -%}
+
+  {%- if section.blocks.size > 0 -%}
+    <div class="video-content">
+      <div>
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'heading' -%}
+              <h2>{{ block.settings.heading }}</h2>
+
+            {%- when 'sub_heading' -%}
+              <p>{{ block.settings.sub_heading }}</p>
+
+            {%- when 'label' -%}
+              <span>{{ block.settings.label }}</span>
+
+            {%- when 'button' -%}
+              <a
+                href="{{ block.settings.btn_link }}"
+                target="{% if block.settings.target %}_blank{% else %}_self{% endif %}"
+              >
+                {{ block.settings.btn_label }}
+              </a>
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Custom Video Section",
+  "settings": [
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Desktop Video"
+    },
+    {
+      "type": "video",
+      "id": "video_mb",
+      "label": "Mobile Video"
+    },
+    {
+      "type": "video_url",
+      "id": "external_video_url",
+      "accept": ["youtube"],
+      "label": "Fallback YouTube Video"
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "label": "Desktop Height",
+      "options": [
+        { "value": "adapt_image_first", "label": "Adapt to video" },
+        { "value": "fixed", "label": "Fixed height" }
+      ],
+      "default": "adapt_image_first"
+    },
+    {
+      "type": "range",
+      "id": "fixed_height",
+      "label": "Desktop Fixed Height",
+      "min": 200,
+      "max": 1000,
+      "step": 10,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "select",
+      "id": "image_height_mb",
+      "label": "Mobile Height",
+      "options": [
+        { "value": "adapt_image_first", "label": "Adapt to video" },
+        { "value": "fixed", "label": "Fixed height" }
+      ],
+      "default": "adapt_image_first"
+    },
+    {
+      "type": "range",
+      "id": "fixed_height_mb",
+      "label": "Mobile Fixed Height",
+      "min": 200,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "default": 400
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "settings": [{ "type": "text", "id": "heading", "label": "Heading" }]
+    },
+    {
+      "type": "sub_heading",
+      "name": "Subheading",
+      "settings": [{ "type": "text", "id": "sub_heading", "label": "Subheading" }]
+    },
+    {
+      "type": "label",
+      "name": "Label",
+      "settings": [{ "type": "text", "id": "label", "label": "Label" }]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        { "type": "text", "id": "btn_label", "label": "Button Text" },
+        { "type": "url", "id": "btn_link", "label": "Button Link" },
+        { "type": "checkbox", "id": "target", "label": "Open in new tab" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video Section"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,388 @@
+{% liquid
+  assign selected_variant = product.selected_or_first_available_variant
+
+  assign desktop_bg = product.metafields.custom.desktop_card_color.value | default: section.settings.card_bg_color
+  assign mobile_bg = product.metafields.custom.mobile_card_color.value | default: desktop_bg
+
+  comment
+    dynamic Text color via Product Tags
+      Example tag: pp-text:#fff
+
+
+    assign dynamic_text_color = ''
+
+    for tag in product.tags
+      if tag contains 'pp-text:'
+        assign dynamic_text_color = tag | remove: 'pp-text:'
+      endif
+    endfor
+
+    assign final_text_color = dynamic_text_color | default: '#fff'
+  endcomment
+  comment
+    SAFE VIDEO ASSIGN (FIXES RENDER ISSUE)
+  endcomment
+  assign hero_video = product.metafields.custom.hero_video
+
+  assign dynamic_text_color = ''
+  assign dynamic_btn_text_color = ''
+  assign dynamic_btn_color = ''
+
+  for tag in product.tags
+    if tag contains 'pp-text:'
+      assign dynamic_text_color = tag | remove: 'pp-text:'
+    endif
+
+    if tag contains 'pp-btn:'
+      assign dynamic_btn_color = tag | remove: 'pp-btn:'
+    endif
+
+    if tag contains 'pp-btn-text:'
+      assign dynamic_btn_text_color = tag | remove: 'pp-btn-text:'
+    endif
+  endfor
+
+  assign final_text_color = dynamic_text_color | default: '#fff'
+  assign final_btn_color = dynamic_btn_color | default: '#fff'
+  assign final_btn_text_color = dynamic_btn_text_color | default: '#000'
+%}
+
+<style>
+  .product-page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 2rem 5rem;
+    background: {{ desktop_bg }};
+  }
+
+  .product-page-card {
+    width: 100%;
+    max-width: 395px;
+    padding: 3rem 2rem;
+    border-radius: 12px;
+    background: {{ desktop_bg }};
+    box-shadow: 0 1px 20px rgba(0,0,0,.08);
+  }
+
+  .product-page-video video {
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+  }
+
+  .product-page-content {
+    color: {{ final_text_color }};
+    text-align: center;
+  }
+
+  .product-page-title {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 5.2rem;
+    letter-spacing: .2rem;
+    line-height: .45;
+    margin: 1.4rem 0 0;
+  }
+
+  .product-page-subtitle {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 2.6rem;
+    letter-spacing: .15rem;
+  }
+
+  .product-page-price {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 3rem;
+    margin: .8rem 0 1.2rem;
+  }
+
+  .product-page-btn {
+    width: 100%;
+    padding: 1.2rem;
+    background: {{final_btn_color}};
+    color: {{ final_btn_text_color }};
+    border: 0;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: .2rem;
+    cursor: pointer;
+  }
+
+  .product-page-btn[disabled] {
+    opacity: .6;
+    cursor: not-allowed;
+  }
+
+  .product-page-accordion {
+    margin-top: 1.6rem;
+    border-top: 1px solid rgba(255,255,255,.25);
+    text-align: left;
+    font-family: "Poppins", sans-serif;
+    font-weight: 300;
+    color: {{ final_text_color }};
+  }
+
+  .accordion-item {
+    border-bottom: 1px solid rgba(255,255,255,.25);
+  }
+
+  .accordion-title {
+    width: 100%;
+    background: none;
+    border: none;
+    color: {{ final_text_color }};
+    padding: 1.2rem 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.6rem;
+    cursor: pointer;
+  }
+
+  .accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .35s ease;
+  }
+
+  .accordion-item.active .accordion-content {
+    max-height: 600px;
+  }
+
+  .accordion-inner {
+    font-size: 1.4rem;
+    line-height: 1.6;
+    padding-bottom: 1.2rem;
+    opacity: .9;
+  }
+
+  @media (max-width: 1024px) {
+    .product-page-wrapper,
+    .product-page-card {
+      background: {{ mobile_bg }};
+    }
+
+    .product-page-wrapper {
+      justify-content: center;
+      padding: 2rem;
+      background-image: none !important;
+    }
+
+    .product-page-title { font-size: 4rem; }
+    .product-page-subtitle { font-size: 2.2rem; }
+    .product-page-price { font-size: 2.6rem; }
+  }
+  @media (max-width: 400px){
+    .product-page-wrapper{
+      background-image: none !important;
+      background-color: #fff;
+    }
+  }
+</style>
+
+<section
+  class="product-page-wrapper"
+  {% if product.metafields.custom.banner_image.value %}
+    style="background-image:url({{ product.metafields.custom.banner_image.value | image_url }});background-size:cover;"
+  {% endif %}
+>
+  <div class="product-page-card">
+    {% if hero_video != blank %}
+      <div class="product-page-video">
+        <video autoplay muted loop playsinline preload="metadata">
+          <source src="{{ hero_video | file_url }}" type="video/mp4">
+          <source src="{{ hero_video | file_url }}" type="video/webm">
+        </video>
+      </div>
+    {% endif %}
+
+    <div class="product-page-content">
+      <h1 class="product-page-title">{{ product.title }}</h1>
+
+      {% if product.metafields.custom.tagline %}
+        <div class="product-page-subtitle">
+          {{ product.metafields.custom.tagline }}
+        </div>
+      {% endif %}
+
+      <div class="product-page-price">
+        {{ selected_variant.price | money }}
+      </div>
+
+      <button
+        class="product-page-btn"
+        type="button"
+        data-variant-id="{{ selected_variant.id }}"
+      >
+        Shop Now
+      </button>
+
+      <div class="product-page-accordion">
+        {% if product.metafields.custom.short_description %}
+          <div class="accordion-item active">
+            <button class="accordion-title">Description <span>−</span></button>
+            <div class="accordion-content">
+              <div class="accordion-inner">
+                {{ product.metafields.custom.short_description | metafield_tag }}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        {% if product.metafields.custom.fragrance_notes %}
+          <div class="accordion-item">
+            <button class="accordion-title">Fragrance Notes <span>+</span></button>
+            <div class="accordion-content">
+              <div class="accordion-inner">
+                {{ product.metafields.custom.fragrance_notes | metafield_tag }}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        {% if product.metafields.custom.how_to_use %}
+          <div class="accordion-item">
+            <button class="accordion-title">How To Use <span>+</span></button>
+            <div class="accordion-content">
+              <div class="accordion-inner">
+                {{ product.metafields.custom.how_to_use | metafield_tag }}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        {% if product.metafields.custom.ingredients %}
+          <div class="accordion-item">
+            <button class="accordion-title">Ingredients <span>+</span></button>
+            <div class="accordion-content">
+              <div class="accordion-inner">
+                {{ product.metafields.custom.ingredients | metafield_tag }}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (() => {
+    'use strict';
+
+    const ready = (fn) => {
+      if (document.readyState !== 'loading') fn();
+      else document.addEventListener('DOMContentLoaded', fn);
+    };
+
+    const openCartDrawer = () => {
+      const drawer = document.querySelector('cart-drawer');
+      if (drawer?.open) {
+        drawer.open();
+        return true;
+      }
+
+      const trigger =
+        document.querySelector('[data-cart-drawer-trigger]') || document.querySelector('[aria-controls="CartDrawer"]');
+
+      if (trigger) {
+        trigger.click();
+        return true;
+      }
+
+      return false;
+    };
+
+    const initAddToCart = () => {
+      const btn = document.querySelector('.product-page-btn');
+      if (!btn) return;
+
+      btn.addEventListener('click', async () => {
+        const variantId = btn.dataset.variantId;
+        if (!variantId || btn.disabled) return;
+
+        btn.disabled = true;
+        openCartDrawer();
+
+        try {
+          const addRes = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: variantId, quantity: 1 }),
+          });
+
+          if (!addRes.ok) throw new Error('Add to cart failed');
+
+          const cartRes = await fetch('/cart.js');
+          const cart = await cartRes.json();
+
+          document.dispatchEvent(
+            new CustomEvent('cart:refresh', {
+              bubbles: true,
+              detail: { cart },
+            })
+          );
+        } catch (err) {
+          console.error(err);
+          alert('Unable to add product to cart. Please try again.');
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    };
+
+    const initAccordions = () => {
+      const items = document.querySelectorAll('.accordion-item');
+
+      items.forEach((item) => {
+        const button = item.querySelector('.accordion-title');
+        const icon = button?.querySelector('span');
+
+        if (!button) return;
+
+        button.setAttribute('aria-expanded', item.classList.contains('active'));
+
+        button.addEventListener('click', () => {
+          const isOpen = item.classList.contains('active');
+
+          items.forEach((i) => {
+            i.classList.remove('active');
+            i.querySelector('.accordion-title')?.setAttribute('aria-expanded', 'false');
+            const span = i.querySelector('.accordion-title span');
+            if (span) span.textContent = '+';
+          });
+
+          if (!isOpen) {
+            item.classList.add('active');
+            button.setAttribute('aria-expanded', 'true');
+            if (icon) icon.textContent = '−';
+          }
+        });
+      });
+    };
+
+    ready(() => {
+      initAddToCart();
+      initAccordions();
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Dynamic 360° Product Card",
+  "settings": [
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Fallback Background Color",
+      "default": "#bc5364"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dynamic 360° Product"
+    }
+  ]
+}
+{% endschema %}

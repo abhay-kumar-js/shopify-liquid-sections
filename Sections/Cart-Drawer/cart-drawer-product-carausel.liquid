@@ -1,0 +1,243 @@
+{% liquid
+  assign carousel_collection = collection
+
+  if carousel_collection == blank and passed_collection != blank
+    assign carousel_collection = passed_collection
+  endif
+%}
+
+{% if carousel_collection != blank %}
+  <section class="product-card-carousel">
+    <div class="container-wrap">
+      <div class="complimentary-text">
+        <h6>Please select your complimentary sample</h6>
+      </div>
+
+      <div class="carousel-nav">
+        <button class="carousel-arrow carousel-arrow-left" aria-label="Scroll Left">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M15 6L9 12L15 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <button class="carousel-arrow carousel-arrow-right" aria-label="Scroll Right">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="carousel-track">
+      {% for product in carousel_collection.products limit: 12 %}
+        {% assign variant = product.selected_or_first_available_variant %}
+
+        <div class="carousel-card">
+          <a href="{{ product.url }}" class="carousel-image">
+            {{ product.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: product.title }}
+          </a>
+
+          <div class="carousel-meta">
+            <h3 class="carousel-title">
+              {{ product.title }}
+            </h3>
+
+            <span class="carousel-price">
+              {{ product.price | money }}
+            </span>
+
+            {% if variant.available %}
+              <form method="post" action="/cart/add" class="carousel-cart ajax-cart-form">
+                <input type="hidden" name="id" value="{{ variant.id }}">
+                <button type="submit" class="cart-button" aria-label="Add to cart">+</button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <style>
+    .complimentary-text {
+      padding-block: 2rem;
+    }
+
+    .container-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .complimentary-text h6 {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .product-card-carousel {
+      background: #fff8f0;
+      padding: 0 20px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* arrows */
+
+    .carousel-nav {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .carousel-arrow {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #111;
+      opacity: 0.7;
+    }
+
+    .carousel-arrow:hover {
+      opacity: 1;
+    }
+
+    /* carousel */
+
+    .carousel-track {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 10px;
+    }
+
+    .carousel-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .carousel-card {
+      flex: 0 0 calc(40% - 8px);
+      scroll-snap-align: start;
+      text-align: left;
+    }
+
+    .carousel-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 6px;
+    }
+
+    .carousel-meta {
+      margin-top: 10px;
+      position: relative;
+      padding-right: 40px;
+    }
+
+    .carousel-title {
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .carousel-price {
+      display: block;
+      font-size: 11px;
+      margin-top: 4px;
+      color: #111;
+    }
+
+    .carousel-cart {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+
+    .cart-button {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: none;
+      background: #000;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cart-button:hover {
+      background: #333;
+    }
+  </style>
+
+  <script>
+    /* carousel navigation */
+
+    document.addEventListener('click', function (e) {
+      const rightArrow = e.target.closest('.carousel-arrow-right');
+      const leftArrow = e.target.closest('.carousel-arrow-left');
+
+      if (rightArrow) {
+        const carousel = rightArrow.closest('.product-card-carousel').querySelector('.carousel-track');
+
+        carousel.scrollBy({
+          left: carousel.offsetWidth * 0.8,
+          behavior: 'smooth',
+        });
+      }
+
+      if (leftArrow) {
+        const carousel = leftArrow.closest('.product-card-carousel').querySelector('.carousel-track');
+
+        carousel.scrollBy({
+          left: -(carousel.offsetWidth * 0.8),
+          behavior: 'smooth',
+        });
+      }
+    });
+
+    /* ajax add to cart */
+
+    document.addEventListener('submit', function (e) {
+      const form = e.target.closest('.ajax-cart-form');
+      if (!form) return;
+
+      e.preventDefault();
+
+      if (form.dataset.loading === 'true') return;
+      form.dataset.loading = 'true';
+
+      const formData = new FormData(form);
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Accept: 'application/json',
+        },
+      })
+        .then((res) => res.json())
+        .then(() => {
+          document.dispatchEvent(new CustomEvent('cart:refresh'));
+          document.dispatchEvent(new CustomEvent('cart:open'));
+        })
+        .catch((err) => {
+          console.error('Cart Error:', err);
+        })
+        .finally(() => {
+          form.dataset.loading = 'false';
+        });
+    });
+  </script>
+{% endif %}
