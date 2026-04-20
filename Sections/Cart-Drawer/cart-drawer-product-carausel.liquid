@@ -1,3 +1,9 @@
+{% comment %} {%- render 'cart-complementary' -%} {% endcomment %}
+{% comment %}
+  {% if section.settings.mini_cart_collection != blank %}
+    {% render 'also-bought', passed_collection: section.settings.mini_cart_collection %}
+  {% endif %}
+{% endcomment %}
 {% liquid
   assign carousel_collection = collection
 
