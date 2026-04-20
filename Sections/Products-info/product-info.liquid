@@ -1,0 +1,152 @@
+{% liquid
+  assign info_title = product.metafields.custom.information_title.value
+  assign info_text = product.metafields.custom.information_text
+
+  assign inspiration_title = product.metafields.custom.inspiration_title.value
+  assign inspiration_text = product.metafields.custom.inspiration_text
+%}
+
+{% if product != blank %}
+  <section class="product-accordion-section">
+    <div class="accordion-container">
+      <!-- 1. INSPIRATION -->
+      {% if inspiration_title != blank or inspiration_text != blank %}
+        <details class="accordion-item js-accordion">
+          <summary class="accordion-summary">
+            <span class="accordion-title">
+              {{ inspiration_title | default: 'INSPIRATION FROM' }}
+            </span>
+            <span class="accordion-icon"></span>
+          </summary>
+
+          <div class="accordion-content">
+            <div class="rte">
+              {% if inspiration_text != blank %}
+                {{ inspiration_text | metafield_tag }}
+              {% else %}
+                <p>No inspiration content available.</p>
+              {% endif %}
+            </div>
+          </div>
+        </details>
+      {% endif %}
+
+      <!-- 2. DESCRIPTION -->
+      {% if product.description != blank %}
+        <details class="accordion-item js-accordion" open>
+          <summary class="accordion-summary">
+            <span class="accordion-title">DESCRIPTION</span>
+            <span class="accordion-icon"></span>
+          </summary>
+
+          <div class="accordion-content">
+            <div class="rte">
+              {{ product.description }}
+            </div>
+          </div>
+        </details>
+      {% endif %}
+
+      <!-- 3. INFORMATION -->
+      <details class="accordion-item js-accordion">
+        <summary class="accordion-summary">
+          <span class="accordion-title">
+            {{ info_title | default: 'INFORMATION' }}
+          </span>
+          <span class="accordion-icon"></span>
+        </summary>
+
+        <div class="accordion-content">
+          <div class="rte">
+            {% if info_text != blank %}
+              {{ info_text | metafield_tag }}
+            {% else %}
+              <p>
+                <strong
+                  >For External Use Only<br>
+                  Marketed & Manufactured By</strong
+                >
+                Ekka Consumer Products Private Limited<br>
+                360 C Siddharth Compound, Harish Ganj<br>
+                Kanpur, Uttar Pradesh - 208004<br>
+                <br>
+
+                <strong>Expiry:</strong> 3 years from the Date of Manufacturing.<br>
+                (Refer actual Product for Date of Manufacturing)<br>
+                <br>
+
+                <strong>Customer Care:</strong> +91 9236354841<br>
+                Email: arabianaroma1001@gmail.com
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      </details>
+    </div>
+  </section>
+{% endif %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const accordions = document.querySelectorAll('.js-accordion');
+
+    accordions.forEach((accordion) => {
+      const summary = accordion.querySelector('summary');
+      const content = accordion.querySelector('.accordion-content');
+
+      // INIT
+      content.style.maxHeight = accordion.hasAttribute('open') ? content.scrollHeight + 'px' : '0px';
+
+      summary.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const isOpen = accordion.hasAttribute('open');
+
+        // CLOSE OTHERS
+        accordions.forEach((other) => {
+          if (other !== accordion && other.hasAttribute('open')) {
+            const c = other.querySelector('.accordion-content');
+
+            c.style.maxHeight = c.scrollHeight + 'px';
+            requestAnimationFrame(() => {
+              c.style.maxHeight = '0px';
+            });
+
+            other.removeAttribute('open');
+          }
+        });
+
+        if (!isOpen) {
+          accordion.setAttribute('open', '');
+
+          content.style.maxHeight = '0px';
+          requestAnimationFrame(() => {
+            content.style.maxHeight = content.scrollHeight + 'px';
+          });
+        } else {
+          content.style.maxHeight = content.scrollHeight + 'px';
+
+          requestAnimationFrame(() => {
+            content.style.maxHeight = '0px';
+          });
+
+          setTimeout(() => {
+            accordion.removeAttribute('open');
+          }, 400);
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Product Accordion",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Product Accordion"
+    }
+  ]
+}
+{% endschema %}
