@@ -107,18 +107,19 @@
     {%- endif -%}
     <div class="grid grid--{{ section.settings.product_column_desktop }}-col-desktop grid--{{ section.settings.product_column_tablet }}-col-tablet grid--{{ section.settings.product_column_mobile }}-col">
       {% if product_collection.products == blank %}
-        {%- for product in (1..product_limit) -%}
-          {%- assign placeholder_image_index = forloop.index0 | modulo: 4 | plus: 1 -%}
-          {%- assign placeholder_image = 'product-' | append: placeholder_image_index -%}
+        {% for product in (1..product_limit) %}
+          {% assign placeholder_image_index = forloop.index0 | modulo: 4 | plus: 1 %}
+          {% assign placeholder_image = 'product-' | append: placeholder_image_index %}
 
           <div class="grid__item">
             {% render 'card-product-no-info', placeholder_image: placeholder_image %}
           </div>
         {% endfor %}
+
       {% else %}
         {% for product in product_collection.products limit: product_limit %}
-          {%- assign placeholder_image_index = forloop.index0 | modulo: 4 | plus: 1 -%}
-          {%- assign placeholder_image = 'product-' | append: placeholder_image_index -%}
+          {% assign placeholder_image_index = forloop.index0 | modulo: 4 | plus: 1 %}
+          {% assign placeholder_image = 'product-' | append: placeholder_image_index %}
 
           <div class="grid__item">
             {% render 'card-product',
