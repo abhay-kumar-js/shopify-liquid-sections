@@ -1,30 +1,5 @@
-{% comment %}
-   1. product-listing-1.liquid
-   2. section-product-listing.css
-  3. component-product-card.css
-  4. card-product.css
-  5.base.css
-  6.grid.css
-
-    add these code to the product list section css block
-    .product-list-wrapper .section-head .title,
-    .dz-content .title,
-    .view-all-btn span,
-    .price .price-item {
-      color: #fff;
-    }
-    .view-all-btn span {
-      background-image: linear-gradient(0deg, #ffffff 0%, #ffffff 100%);
-    }
-    .view-all-btn svg {
-      stroke: #fff;
-    }
-    .price--on-sale .price-item--regular {
-      opacity: 0.8;
-    }
-{% endcomment %}
-
 {{ 'section-product-listing.css' | asset_url | stylesheet_tag }}
+{{ 'aa-product-listing-1.css' | asset_url | stylesheet_tag }}
 
 {% liquid
   assign container_class = section.settings.layout

@@ -1,0 +1,98 @@
+{% comment %} bg: 233833 {% endcomment %}
+
+{%- liquid
+  assign ratio = 1
+  if product.featured_image and media_aspect_ratio == 'portrait'
+    assign ratio = 0.8
+  elsif product.featured_image and media_aspect_ratio == 'adapt'
+    assign ratio = product.featured_image.aspect_ratio
+  endif
+  if ratio == 0 or ratio == null
+    assign ratio = 1
+  endif
+-%}
+
+<div class="shop-card product-item" data-product-id="{{ product.id }}">
+  <!-- ✅ CLICKABLE AREA START -->
+  <a href="{{ product.url }}" class="a-card-link">
+    <div class="dz-media-wrapper">
+      <div
+        class="dz-media {% if product.images.size > 1 %} card-img-hover {% endif %}"
+        style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
+      >
+        {% if product.featured_image != blank %}
+          <div class="product-image">
+            <img
+              src="{{ product.featured_image | image_url: width: 1500 }}"
+              alt="{{ product.title }}"
+              class="image"
+              width=""
+              height=""
+            >
+          </div>
+        {% endif %}
+
+        {% if product.images.size > 1 %}
+          <div class="hover-img">
+            <img
+              src="{{ product.images[1] | image_url: width: 1500 }}"
+              class="image"
+              width=""
+              height=""
+            >
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="dz-content">
+      <h3 class="title">{{ product.title }}</h3>
+      {% render 'price', product: product %}
+    </div>
+  </a>
+  <!-- ✅ CLICKABLE AREA END -->
+
+  <!-- ❗ NON-CLICKABLE AREA -->
+  {% if product.available %}
+    <div class="a-cart-wrapper">
+      <add-to-cart
+        class="cart-btn btn btn-secondary"
+        data-variant-id="{{ product.variants.first.id }}"
+      >
+        <span>{{ 'products.product.add_to_cart' | t }}</span>
+      </add-to-cart>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  .a-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* IMAGE FIX */
+  .dz-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* CARD STRUCTURE */
+  .shop-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  /* PUSH BUTTON DOWN */
+  .dz-content {
+    flex-grow: 1;
+  }
+
+  /* SEPARATE BUTTON */
+  .a-cart-wrapper {
+    margin-top: 10px;
+  }
+</style>
