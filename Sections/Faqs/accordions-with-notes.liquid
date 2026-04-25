@@ -1,0 +1,565 @@
+{% comment %}
+  ✅ STEP 1 — Create Metaobject (Data Model)
+
+  Go to:
+
+  Shopify Admin → Settings → Custom data → Metaobjects → Add definition
+
+  Create:
+  Name: Perfume Note
+  Type: perfume_note
+  Add fields:
+  Field Name	Key	Type
+  Image	image	File
+  Title	title	Single line text
+  Description	description	Multi-line text
+
+  Save.
+
+  ✅ STEP 2 — Create Product Metafield
+
+  Go to:
+
+  Settings → Custom data → Products → Add definition
+
+  Create:
+  Name: Perfume Notes
+  Namespace & key: custom.notes
+  Type:
+  → Metaobject → List → Perfume Note
+
+  Save.
+
+  ✅ STEP 3 — Add Data to Product
+
+  Go to any product:
+
+  Scroll to Metafields
+  Add entries under Perfume Notes
+  Upload image
+  Add title (LEMON, LAVENDER, etc.)
+  Add description
+  ✅ STEP 4 — Add Code (FINAL)
+
+  Now integrate into your existing code.
+{% endcomment %}
+
+{% liquid
+  assign info_title = product.metafields.custom.information_title.value
+  assign info_text = product.metafields.custom.information_text
+
+  assign inspiration_title = product.metafields.custom.inspiration_title.value
+  assign inspiration_text = product.metafields.custom.inspiration_text
+
+  assign notes = product.metafields.custom.notes.value
+%}
+
+{% if product != blank %}
+  <section class="product-accordion-section">
+    <!-- ============================= -->
+    <!-- PERFUME NOTES (ALWAYS VISIBLE) -->
+    <!-- ============================= -->
+    {% if notes != blank %}
+      <div class="perfume-notes">
+        <h3 class="notes-heading">PERFUME NOTES</h3>
+
+        <div class="notes-grid">
+          {% for note in notes %}
+            <div class="note-item">
+              {% if note.image %}
+                <div class="note-image">
+                  <img
+                    src="{{ note.image | image_url: width: 200 }}"
+                    alt="{{ note.title | escape }}"
+                    width=""
+                    height=""
+                  >
+                </div>
+              {% endif %}
+
+              {% if note.title != blank %}
+                <h4 class="note-title">{{ note.title }}</h4>
+              {% endif %}
+
+              {% if note.description != blank %}
+                <p class="note-desc">{{ note.description }}</p>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- ============================= -->
+    <!-- ACCORDION -->
+    <!-- ============================= -->
+    <div class="accordion-container">
+      <!-- INSPIRATION -->
+      {% if inspiration_title != blank or inspiration_text != blank %}
+        <details class="accordion-item js-accordion">
+          <summary class="accordion-summary">
+            <span class="accordion-title">
+              {{ inspiration_title | default: 'INSPIRATION FROM' }}
+            </span>
+            <span class="accordion-icon"></span>
+          </summary>
+
+          <div class="accordion-content">
+            <div class="rte">
+              {% if inspiration_text != blank %}
+                {{ inspiration_text | metafield_tag }}
+              {% else %}
+                <p>No inspiration content available.</p>
+              {% endif %}
+            </div>
+          </div>
+        </details>
+      {% endif %}
+
+      <!-- DESCRIPTION -->
+      {% if product.description != blank %}
+        <details class="accordion-item js-accordion" open>
+          <summary class="accordion-summary">
+            <span class="accordion-title">DESCRIPTION</span>
+            <span class="accordion-icon"></span>
+          </summary>
+
+          <div class="accordion-content">
+            <div class="rte">
+              {{ product.description }}
+            </div>
+          </div>
+        </details>
+      {% endif %}
+
+      <!-- INFORMATION -->
+      <details class="accordion-item js-accordion">
+        <summary class="accordion-summary">
+          <span class="accordion-title">
+            {{ info_title | default: 'INFORMATION' }}
+          </span>
+          <span class="accordion-icon"></span>
+        </summary>
+
+        <div class="accordion-content">
+          <div class="rte">
+            {% if info_text != blank %}
+              {{ info_text | metafield_tag }}
+            {% else %}
+              <p>
+                <strong
+                  >For External Use Only<br>
+                  Marketed & Manufactured By</strong
+                ><br>
+                Ekka Consumer Products Private Limited<br>
+                Kanpur, Uttar Pradesh - 208004<br>
+                <br>
+
+                <strong>Expiry:</strong> 3 years from Date of Manufacturing<br>
+                <br>
+
+                <strong>Customer Care:</strong> +91 9236354841<br>
+                Email: arabianaroma1001@gmail.com
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      </details>
+    </div>
+  </section>
+{% endif %}
+
+<!-- ============================= -->
+<!-- CSS -->
+<!-- ============================= -->
+<style>
+  /* PERFUME NOTES */
+  .perfume-notes {
+    margin: 30px 0;
+    padding-top: 20px;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .notes-heading {
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    text-align: center;
+  }
+
+  .note-image img {
+    width: 120px;
+    margin: 0 auto 12px;
+  }
+
+  .note-title {
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .note-desc {
+    font-size: 12px;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .notes-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .notes-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ACCORDION (your existing) */
+  .accordion-content {
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+</style>
+
+<!-- ============================= -->
+<!-- JS (UNCHANGED) -->
+<!-- ============================= -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const accordions = document.querySelectorAll('.js-accordion');
+
+    accordions.forEach((accordion) => {
+      const summary = accordion.querySelector('summary');
+      const content = accordion.querySelector('.accordion-content');
+
+      content.style.maxHeight = accordion.hasAttribute('open') ? content.scrollHeight + 'px' : '0px';
+
+      summary.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const isOpen = accordion.hasAttribute('open');
+
+        accordions.forEach((other) => {
+          if (other !== accordion && other.hasAttribute('open')) {
+            const c = other.querySelector('.accordion-content');
+            c.style.maxHeight = c.scrollHeight + 'px';
+            requestAnimationFrame(() => {
+              c.style.maxHeight = '0px';
+            });
+            other.removeAttribute('open');
+          }
+        });
+
+        if (!isOpen) {
+          accordion.setAttribute('open', '');
+          content.style.maxHeight = '0px';
+          requestAnimationFrame(() => {
+            content.style.maxHeight = content.scrollHeight + 'px';
+          });
+        } else {
+          content.style.maxHeight = content.scrollHeight + 'px';
+          requestAnimationFrame(() => {
+            content.style.maxHeight = '0px';
+          });
+          setTimeout(() => {
+            accordion.removeAttribute('open');
+          }, 400);
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Product Accordion",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Product Accordion"
+    }
+  ]
+}
+{% endschema %}
+
+{% comment %}
+  ---------- working code 2 -----------
+{% endcomment %}
+{% liquid
+  assign info_title = product.metafields.custom.information_title.value
+  assign info_text = product.metafields.custom.information_text
+
+  assign inspiration_title = product.metafields.custom.inspiration_title.value
+  assign inspiration_text = product.metafields.custom.inspiration_text
+
+  assign notes = product.metafields.custom.notes.value
+%}
+
+{% if product != blank %}
+  <section class="product-accordion-section">
+    <div class="accordion-container">
+      <!-- 1. INSPIRATION -->
+      {% if inspiration_title != blank or inspiration_text != blank %}
+        <details class="accordion-item js-accordion">
+          <summary class="accordion-summary">
+            <span class="accordion-title">
+              {{ inspiration_title | default: 'INSPIRATION FROM' }}
+            </span>
+            <span class="accordion-icon"></span>
+          </summary>
+
+          <div class="accordion-content">
+            <div class="rte">
+              {% if inspiration_text != blank %}
+                {{ inspiration_text | metafield_tag }}
+              {% else %}
+                <p>No inspiration content available.</p>
+              {% endif %}
+            </div>
+          </div>
+        </details>
+      {% endif %}
+
+      <!-- 2. PERFUME NOTES (DEFAULT OPEN) -->
+      {% if notes != blank %}
+        <details class="accordion-item js-accordion" data-default-open="true">
+          <summary class="accordion-summary">
+            <span class="accordion-title">PERFUME NOTES</span>
+            <span class="accordion-icon"></span>
+          </summary>
+
+          <div class="accordion-content">
+            <div class="notes-wrapper">
+              <div class="notes-grid">
+                {% for note in notes %}
+                  <div class="note-item">
+                    {% if note.image %}
+                      <div class="note-image">
+                        <img
+                          src="{{ note.image | image_url: width: 200 }}"
+                          alt="{{ note.title | escape }}"
+                          width=""
+                          height=""
+                        >
+                      </div>
+                    {% endif %}
+
+                    {% if note.title %}
+                      <h4 class="note-title">{{ note.title }}</h4>
+                    {% endif %}
+
+                    {% if note.description %}
+                      <p class="note-desc">{{ note.description }}</p>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </details>
+      {% endif %}
+
+      <!-- 3. DESCRIPTION -->
+      {% if product.description != blank %}
+        <details class="accordion-item js-accordion">
+          <summary class="accordion-summary">
+            <span class="accordion-title">DESCRIPTION</span>
+            <span class="accordion-icon"></span>
+          </summary>
+
+          <div class="accordion-content">
+            <div class="rte">
+              {{ product.description }}
+            </div>
+          </div>
+        </details>
+      {% endif %}
+
+      <!-- 4. INFORMATION -->
+      <details class="accordion-item js-accordion">
+        <summary class="accordion-summary">
+          <span class="accordion-title">
+            {{ info_title | default: 'INFORMATION' }}
+          </span>
+          <span class="accordion-icon"></span>
+        </summary>
+
+        <div class="accordion-content">
+          <div class="rte">
+            {% if info_text != blank %}
+              {{ info_text | metafield_tag }}
+            {% else %}
+              <p>
+                <strong
+                  >For External Use Only<br>
+                  Marketed & Manufactured By</strong
+                ><br>
+                Ekka Consumer Products Private Limited<br>
+                Kanpur, Uttar Pradesh - 208004<br>
+                <br>
+
+                <strong>Expiry:</strong> 3 years from Date of Manufacturing<br>
+                <br>
+
+                <strong>Customer Care:</strong> +91 9236354841<br>
+                Email: arabianaroma1001@gmail.com
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      </details>
+    </div>
+  </section>
+{% endif %}
+
+<style>
+  /* ACCORDION */
+  .accordion-content {
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  /* NOTES WRAPPER */
+  .notes-wrapper {
+    padding: 10px 0;
+  }
+
+  /* DESKTOP: 3 COLUMN GRID */
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    text-align: center;
+  }
+
+  /* TABLET: 2 COLUMN */
+  @media (max-width: 768px) {
+    .notes-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+  }
+
+  /* MOBILE: COMPACT 3 COLUMN */
+  @media (max-width: 480px) {
+    .notes-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .note-image img {
+      width: 80px;
+    }
+
+    .note-title {
+      font-size: 10px;
+    }
+
+    .note-desc {
+      font-size: 10px;
+      line-height: 1.3;
+    }
+  }
+
+  /* IMAGE */
+  .note-image img {
+    width: 120px;
+    margin: 0 auto 10px;
+    display: block;
+  }
+
+  /* TEXT */
+  .note-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .note-desc {
+    font-size: 12px;
+    color: #555;
+    line-height: 1.4;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const accordions = document.querySelectorAll('.js-accordion');
+
+    if (!accordions.length) return;
+
+    // CLOSE ALL
+    accordions.forEach((acc) => acc.removeAttribute('open'));
+
+    // OPEN PERFUME NOTES
+    const defaultAcc = document.querySelector('[data-default-open="true"]');
+
+    if (defaultAcc) {
+      const content = defaultAcc.querySelector('.accordion-content');
+      defaultAcc.setAttribute('open', '');
+      content.style.maxHeight = content.scrollHeight + 'px';
+    }
+
+    // INTERACTION
+    accordions.forEach((accordion) => {
+      const summary = accordion.querySelector('summary');
+      const content = accordion.querySelector('.accordion-content');
+
+      if (!accordion.hasAttribute('open')) {
+        content.style.maxHeight = '0px';
+      }
+
+      summary.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const isOpen = accordion.hasAttribute('open');
+
+        // CLOSE OTHERS
+        accordions.forEach((other) => {
+          if (other !== accordion && other.hasAttribute('open')) {
+            const c = other.querySelector('.accordion-content');
+            c.style.maxHeight = c.scrollHeight + 'px';
+            requestAnimationFrame(() => (c.style.maxHeight = '0px'));
+            other.removeAttribute('open');
+          }
+        });
+
+        if (!isOpen) {
+          accordion.setAttribute('open', '');
+          content.style.maxHeight = '0px';
+          requestAnimationFrame(() => {
+            content.style.maxHeight = content.scrollHeight + 'px';
+          });
+        } else {
+          content.style.maxHeight = content.scrollHeight + 'px';
+          requestAnimationFrame(() => (content.style.maxHeight = '0px'));
+          setTimeout(() => accordion.removeAttribute('open'), 400);
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Product Accordion",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Product Accordion"
+    }
+  ]
+}
+{% endschema %}

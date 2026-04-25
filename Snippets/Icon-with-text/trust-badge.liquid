@@ -1,0 +1,101 @@
+{% comment %} usage {% endcomment %}
+{% comment %} {% render 'product-feature-inline' %} {% endcomment %}
+
+{% comment %} Add this inside {% schema %} → "settings": [] {% endcomment %}
+{% comment %}
+  { "type": "header", "content": "Product Features (Inline)" },
+
+  { "type": "image_picker", "id": "f1_image", "label": "Feature 1 Icon" }, { "type": "text", "id": "f1_text", "label":
+  "Feature 1 Text", "default": "Free Delivery" }, { "type": "range", "id": "f1_image_size", "label": "Feature 1 Icon
+  Size", "min": 20, "max": 80, "step": 2, "default": 40 }, { "type": "range", "id": "f1_font_size", "label": "Feature 1
+  Font Size", "min": 10, "max": 18, "step": 1, "default": 12 },
+
+  { "type": "image_picker", "id": "f2_image", "label": "Feature 2 Icon" }, { "type": "text", "id": "f2_text", "label":
+  "Feature 2 Text", "default": "Secure Payment" }, { "type": "range", "id": "f2_image_size", "label": "Feature 2 Icon
+  Size", "min": 20, "max": 80, "step": 2, "default": 40 }, { "type": "range", "id": "f2_font_size", "label": "Feature 2
+  Font Size", "min": 10, "max": 18, "step": 1, "default": 12 },
+
+  { "type": "image_picker", "id": "f3_image", "label": "Feature 3 Icon" }, { "type": "text", "id": "f3_text", "label":
+  "Feature 3 Text", "default": "Easy Returns" }, { "type": "range", "id": "f3_image_size", "label": "Feature 3 Icon Size",
+  "min": 20, "max": 80, "step": 2, "default": 40 }, { "type": "range", "id": "f3_font_size", "label": "Feature 3 Font
+  Size", "min": 10, "max": 18, "step": 1, "default": 12 }
+{% endcomment %}
+
+<div class="pf-wrapper">
+  {% for i in (1..3) %}
+    {% assign key_image = 'f' | append: i | append: '_image' %}
+    {% assign key_text = 'f' | append: i | append: '_text' %}
+    {% assign key_size = 'f' | append: i | append: '_image_size' %}
+    {% assign key_font = 'f' | append: i | append: '_font_size' %}
+
+    {% assign img = section.settings[key_image] %}
+    {% assign text = section.settings[key_text] %}
+    {% assign size = section.settings[key_size] %}
+    {% assign font = section.settings[key_font] %}
+
+    {% if img != blank or text != blank %}
+      <div class="pf-item">
+        {% if img != blank %}
+          <div class="pf-icon">
+            <img
+              src="{{ img | image_url: width: size }}"
+              alt="{{ text | escape }}"
+              style="width: {{ size }}px;"
+            >
+          </div>
+        {% endif %}
+
+        {% if text != blank %}
+          <div class="pf-text" style="font-size: {{ font }}px;">
+            {{ text }}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+
+<style>
+  .pf-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+    text-align: center;
+  }
+  .pf-inline {
+    margin-top: 18px;
+  }
+
+  .pf-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .pf-item {
+    display: grid;
+  }
+
+  .pf-icon img {
+    display: block;
+    margin: 0 auto 6px;
+  }
+
+  .pf-text {
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .pf-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .pf-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
