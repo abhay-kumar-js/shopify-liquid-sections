@@ -1,0 +1,577 @@
+{% liquid
+  assign info_title = product.metafields.custom.information_title.value
+  assign info_text = product.metafields.custom.information_text
+
+  assign inspiration_title = product.metafields.custom.inspiration_title.value
+  assign inspiration_text = product.metafields.custom.inspiration_text
+
+  assign notes = product.metafields.custom.notes.value
+%}
+
+{% if product != blank %}
+  <section class="product-accordion-section">
+    <div class="accordion-container">
+      <!-- 1. INSPIRATION -->
+      {% if inspiration_title != blank or inspiration_text != blank %}
+        <details class="accordion-item js-accordion">
+          <summary class="accordion-summary">
+            <span class="accordion-title">
+              {{ inspiration_title | default: 'INSPIRATION FROM' }}
+            </span>
+            <span class="accordion-icon"></span>
+          </summary>
+
+          <div class="accordion-content">
+            <div class="rte">
+              {% if inspiration_text != blank %}
+                {{ inspiration_text | metafield_tag }}
+              {% else %}
+                <p>No inspiration content available.</p>
+              {% endif %}
+            </div>
+          </div>
+        </details>
+      {% endif %}
+
+      <!-- 2. PERFUME NOTES (DEFAULT OPEN) -->
+      {% if notes != blank %}
+        <details class="accordion-item js-accordion" data-default-open="true">
+          <summary class="accordion-summary">
+            <span class="accordion-title">PERFUME NOTES</span>
+            <span class="accordion-icon"></span>
+          </summary>
+
+          <div class="accordion-content">
+            <div class="notes-wrapper">
+              <div class="notes-grid">
+                {% for note in notes %}
+                  <div class="note-item">
+                    {% if note.image %}
+                      <div class="note-image">
+                        <img
+                          src="{{ note.image | image_url: width: 200 }}"
+                          alt="{{ note.title | escape }}"
+                          width=""
+                          height=""
+                        >
+                      </div>
+                    {% endif %}
+
+                    {% if note.title %}
+                      <h4 class="note-title">{{ note.title }}</h4>
+                    {% endif %}
+
+                    {% if note.description %}
+                      <p class="note-desc">{{ note.description }}</p>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </details>
+      {% endif %}
+
+      <!-- 3. DESCRIPTION -->
+      {% if product.description != blank %}
+        <details class="accordion-item js-accordion">
+          <summary class="accordion-summary">
+            <span class="accordion-title">DESCRIPTION</span>
+            <span class="accordion-icon"></span>
+          </summary>
+
+          <div class="accordion-content">
+            <div class="rte">
+              {{ product.description }}
+            </div>
+          </div>
+        </details>
+      {% endif %}
+
+      <!-- 4. INFORMATION -->
+      <details class="accordion-item js-accordion">
+        <summary class="accordion-summary">
+          <span class="accordion-title">
+            {{ info_title | default: 'INFORMATION' }}
+          </span>
+          <span class="accordion-icon"></span>
+        </summary>
+
+        <div class="accordion-content">
+          <div class="rte">
+            {% if info_text != blank %}
+              {{ info_text | metafield_tag }}
+            {% else %}
+              <p>
+                <strong
+                  >For External Use Only<br>
+                  Marketed & Manufactured By</strong
+                ><br>
+                Ekka Consumer Products Private Limited<br>
+                Kanpur, Uttar Pradesh - 208004<br>
+                <br>
+
+                <strong>Expiry:</strong> 3 years from Date of Manufacturing<br>
+                <br>
+
+                <strong>Customer Care:</strong> +91 9236354841<br>
+                Email: arabianaroma1001@gmail.com
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      </details>
+    </div>
+  </section>
+{% endif %}
+
+<style>
+  /* ACCORDION */
+  .accordion-content {
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  /* WRAPPER */
+  .notes-wrapper {
+    padding: 2px 15px;
+    overflow: hidden;
+  }
+
+  /* SCROLLER */
+  .notes-grid {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-bottom: 10px;
+
+    cursor: grab;
+    user-select: none;
+
+    /* hide scrollbar */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .notes-grid::-webkit-scrollbar {
+    display: none;
+  }
+  .notes-grid:active {
+    cursor: grabbing;
+  }
+
+  /* CARD (FIXED SIZE) */
+  .note-item {
+    flex: 0 0 calc(100% / 3.5);
+    scroll-snap-align: start;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    height: 180px; /* ✅ fixed height */
+  }
+
+  /* IMAGE FIXED */
+  .note-image {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 8px;
+  }
+
+  .note-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* TEXT FIXED */
+  .note-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .note-desc {
+    font-size: 11px;
+    text-align: center;
+    color: #666;
+    line-height: 1.3;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* limit lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* TABLET */
+  @media (max-width: 768px) {
+    .note-item {
+      flex: 0 0 calc(100% / 2.8);
+    }
+  }
+
+  /* MOBILE */
+  @media (max-width: 480px) {
+    .note-item {
+      flex: 0 0 calc(100% / 2.3);
+      height: 150px;
+    }
+
+    .note-image {
+      width: 70px;
+      height: 70px;
+    }
+
+    .note-title {
+      font-size: 10px;
+    }
+
+    .note-desc {
+      font-size: 10px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const accordions = document.querySelectorAll('.js-accordion');
+
+    if (!accordions.length) return;
+
+    // CLOSE ALL
+    accordions.forEach((acc) => acc.removeAttribute('open'));
+
+    // OPEN PERFUME NOTES
+    const defaultAcc = document.querySelector('[data-default-open="true"]');
+
+    if (defaultAcc) {
+      const content = defaultAcc.querySelector('.accordion-content');
+      defaultAcc.setAttribute('open', '');
+      content.style.maxHeight = content.scrollHeight + 'px';
+    }
+
+    // INTERACTION
+    accordions.forEach((accordion) => {
+      const summary = accordion.querySelector('summary');
+      const content = accordion.querySelector('.accordion-content');
+
+      if (!accordion.hasAttribute('open')) {
+        content.style.maxHeight = '0px';
+      }
+
+      summary.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const isOpen = accordion.hasAttribute('open');
+
+        // CLOSE OTHERS
+        accordions.forEach((other) => {
+          if (other !== accordion && other.hasAttribute('open')) {
+            const c = other.querySelector('.accordion-content');
+            c.style.maxHeight = c.scrollHeight + 'px';
+            requestAnimationFrame(() => (c.style.maxHeight = '0px'));
+            other.removeAttribute('open');
+          }
+        });
+
+        if (!isOpen) {
+          accordion.setAttribute('open', '');
+          content.style.maxHeight = '0px';
+          requestAnimationFrame(() => {
+            content.style.maxHeight = content.scrollHeight + 'px';
+          });
+        } else {
+          content.style.maxHeight = content.scrollHeight + 'px';
+          requestAnimationFrame(() => (content.style.maxHeight = '0px'));
+          setTimeout(() => accordion.removeAttribute('open'), 400);
+        }
+      });
+    });
+  });
+  /* DRAG SCROLL (MOUSE + TOUCH) */
+  document.querySelectorAll('.notes-grid').forEach((slider) => {
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    // MOUSE
+    slider.addEventListener('mousedown', (e) => {
+      isDown = true;
+      slider.classList.add('dragging');
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+      slider.classList.remove('dragging');
+    });
+
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+      slider.classList.remove('dragging');
+    });
+
+    slider.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 1.5; // speed
+      slider.scrollLeft = scrollLeft - walk;
+    });
+
+    // TOUCH
+    let touchStartX = 0;
+
+    slider.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      scrollLeft = slider.scrollLeft;
+    });
+
+    slider.addEventListener('touchmove', (e) => {
+      const x = e.touches[0].clientX;
+      const walk = (x - touchStartX) * 1.2;
+      slider.scrollLeft = scrollLeft - walk;
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Product Accordion",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Product Accordion"
+    }
+  ]
+}
+{% endschema %}
+
+{% comment %} working code  {% endcomment %}
+{% comment %}
+  {% liquid
+    assign info_title = product.metafields.custom.information_title.value
+    assign info_text = product.metafields.custom.information_text
+
+    assign inspiration_title = product.metafields.custom.inspiration_title.value
+    assign inspiration_text = product.metafields.custom.inspiration_text
+  %}
+
+  {% if product != blank %}
+    <section class="product-accordion-section">
+      <div class="accordion-container">
+        <!-- 1. INSPIRATION -->
+        {% if inspiration_title != blank or inspiration_text != blank %}
+          <details class="accordion-item js-accordion">
+            <summary class="accordion-summary">
+              <span class="accordion-title">
+                {{ inspiration_title | default: 'INSPIRATION FROM' }}
+              </span>
+              <span class="accordion-icon"></span>
+            </summary>
+
+            <div class="accordion-content">
+              <div class="rte">
+                {% if inspiration_text != blank %}
+                  {{ inspiration_text | metafield_tag }}
+                {% else %}
+                  <p>No inspiration content available.</p>
+                {% endif %}
+              </div>
+            </div>
+          </details>
+        {% endif %}
+
+        <!-- 2. DESCRIPTION -->
+        {% if product.description != blank %}
+          <details class="accordion-item js-accordion" open>
+            <summary class="accordion-summary">
+              <span class="accordion-title">DESCRIPTION</span>
+              <span class="accordion-icon"></span>
+            </summary>
+
+            <div class="accordion-content">
+              <div class="rte">
+                {{ product.description }}
+              </div>
+            </div>
+          </details>
+        {% endif %}
+
+        <!-- 3. INFORMATION -->
+        <details class="accordion-item js-accordion">
+          <summary class="accordion-summary">
+            <span class="accordion-title">
+              {{ info_title | default: 'INFORMATION' }}
+            </span>
+            <span class="accordion-icon"></span>
+          </summary>
+
+          <div class="accordion-content">
+            <div class="rte">
+              {% if info_text != blank %}
+                {{ info_text | metafield_tag }}
+              {% else %}
+                <p>
+                  <strong
+                    >For External Use Only<br>
+                    Marketed & Manufactured By</strong
+                  >
+                  Ekka Consumer Products Private Limited<br>
+                  360 C Siddharth Compound, Harish Ganj<br>
+                  Kanpur, Uttar Pradesh - 208004<br>
+                  <br>
+
+                  <strong>Expiry:</strong> 3 years from the Date of Manufacturing.<br>
+                  (Refer actual Product for Date of Manufacturing)<br>
+                  <br>
+
+                  <strong>Customer Care:</strong> +91 9236354841<br>
+                  Email: arabianaroma1001@gmail.com
+                </p>
+              {% endif %}
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+  {% endif %}
+
+  {% comment %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const accordions = document.querySelectorAll('.js-accordion');
+
+        accordions.forEach((accordion) => {
+          const summary = accordion.querySelector('summary');
+          const content = accordion.querySelector('.accordion-content');
+
+          // INIT
+          content.style.maxHeight = accordion.hasAttribute('open') ? content.scrollHeight + 'px' : '0px';
+
+          summary.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const isOpen = accordion.hasAttribute('open');
+
+            // CLOSE OTHERS
+            accordions.forEach((other) => {
+              if (other !== accordion && other.hasAttribute('open')) {
+                const c = other.querySelector('.accordion-content');
+
+                c.style.maxHeight = c.scrollHeight + 'px';
+                requestAnimationFrame(() => {
+                  c.style.maxHeight = '0px';
+                });
+
+                other.removeAttribute('open');
+              }
+            });
+
+            if (!isOpen) {
+              accordion.setAttribute('open', '');
+
+              content.style.maxHeight = '0px';
+              requestAnimationFrame(() => {
+                content.style.maxHeight = content.scrollHeight + 'px';
+              });
+            } else {
+              content.style.maxHeight = content.scrollHeight + 'px';
+
+              requestAnimationFrame(() => {
+                content.style.maxHeight = '0px';
+              });
+
+              setTimeout(() => {
+                accordion.removeAttribute('open');
+              }, 400);
+            }
+          });
+        });
+      });
+    </script>
+  {% endcomment %}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const accordions = document.querySelectorAll('.js-accordion');
+
+      if (!accordions.length) return;
+
+      // ❗ FORCE: remove all existing open states
+      accordions.forEach((acc) => acc.removeAttribute('open'));
+
+      // ✅ OPEN FIRST ACCORDION ONLY
+      const firstAccordion = accordions[0];
+      const firstContent = firstAccordion.querySelector('.accordion-content');
+
+      firstAccordion.setAttribute('open', '');
+      firstContent.style.maxHeight = firstContent.scrollHeight + 'px';
+
+      // ✅ NORMAL BEHAVIOR (your existing logic)
+      accordions.forEach((accordion) => {
+        const summary = accordion.querySelector('summary');
+        const content = accordion.querySelector('.accordion-content');
+
+        // INIT CLOSED (except first already handled)
+        if (!accordion.hasAttribute('open')) {
+          content.style.maxHeight = '0px';
+        }
+
+        summary.addEventListener('click', function (e) {
+          e.preventDefault();
+
+          const isOpen = accordion.hasAttribute('open');
+
+          // CLOSE OTHERS
+          accordions.forEach((other) => {
+            if (other !== accordion && other.hasAttribute('open')) {
+              const c = other.querySelector('.accordion-content');
+
+              c.style.maxHeight = c.scrollHeight + 'px';
+              requestAnimationFrame(() => {
+                c.style.maxHeight = '0px';
+              });
+
+              other.removeAttribute('open');
+            }
+          });
+
+          if (!isOpen) {
+            accordion.setAttribute('open', '');
+
+            content.style.maxHeight = '0px';
+            requestAnimationFrame(() => {
+              content.style.maxHeight = content.scrollHeight + 'px';
+            });
+          } else {
+            content.style.maxHeight = content.scrollHeight + 'px';
+
+            requestAnimationFrame(() => {
+              content.style.maxHeight = '0px';
+            });
+
+            setTimeout(() => {
+              accordion.removeAttribute('open');
+            }, 400);
+          }
+        });
+      });
+    });
+  </script>
+  {% schema %}
+  {
+    "name": "Custom Product Info",
+    "settings": [],
+    "presets": [
+      {
+        "name": "Product Info"
+      }
+    ]
+  }
+  {% endschema %}
+{% endcomment %}

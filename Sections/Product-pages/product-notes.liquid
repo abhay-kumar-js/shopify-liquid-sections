@@ -1,0 +1,226 @@
+<!--
+  -----------------------
+   --- import: product-notes.html ---
+  -------------------------
+-->
+{% assign notes = product.metafields.custom.notes.value %}
+
+{% assign head_notes = notes | where: 'type', 'head' %}
+{% assign heart_notes = notes | where: 'type', 'heart' %}
+{% assign base_notes = notes | where: 'type', 'base' %}
+
+<div class="notes-wrapper">
+  <!-- HEADER -->
+  <div class="notes-header">
+    <h2>NOTES</h2>
+    <span class="view-all" onclick="openModal()">VIEW ALL →</span>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" data-tab="head">HEAD</div>
+    <div class="tab" data-tab="heart">HEART</div>
+    <div class="tab" data-tab="base">BASE</div>
+  </div>
+
+  <!-- MOBILE -->
+  <div class="notes-mobile">
+    {% for group in "head,heart,base" | split: "," %}
+      <div class="notes-group {% if forloop.first %}active{% endif %}" id="{{ group }}">
+        <div class="notes-items">
+          {% assign current_notes = notes | where: 'type', group %}
+
+          {% for note in current_notes limit: 3 %}
+            <div>
+              <img src="{{ note.image | image_url: width: 100 }}">
+              <p>{{ note.title }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- DESKTOP -->
+  <div class="notes-desktop">
+    <h2>NOTES</h2>
+
+    <div class="notes-row">
+      {% for group in "head,heart,base" | split: "," %}
+        <div class="notes-col">
+          <h3>{{ group | upcase }} NOTES</h3>
+
+          <div class="notes-items">
+            {% assign current_notes = notes | where: 'type', group %}
+            {% for note in current_notes %}
+              <div>
+                <img src="{{ note.image | image_url: width: 120 }}">
+                <p>{{ note.title }}</p>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="notesModal">
+  <div class="modal-content">
+    <div class="close-wrapper">
+      <h2 class="modal-title">PRODUCT NOTES</h2>
+      <button class="close" onclick="closeModal()">X</button>
+    </div>
+
+    <div class="notes-row">
+      {% for group in "head,heart,base" | split: "," %}
+        <div class="notes-col">
+          <h3>{{ group | upcase }}</h3>
+
+          <div class="notes-items">
+            {% assign current_notes = notes | where: 'type', group %}
+            {% for note in current_notes %}
+              <div>
+                <img src="{{ note.image | image_url: width: 120 }}">
+                <p>{{ note.title }}</p>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .notes-wrapper * {
+    box-sizing: border-box;
+    font-family: Arial;
+  }
+
+  /* HEADER */
+  .notes-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 20px;
+    padding: 0 15px;
+    border-bottom: 1px solid #eee;
+  }
+  .tab {
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0.5;
+  }
+  .tab.active {
+    opacity: 1;
+    border-bottom: 2px solid black;
+  }
+
+  /* GRID */
+  .notes-items {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    text-align: center;
+  }
+  .notes-items img {
+    width: 70px;
+  }
+
+  /* MOBILE */
+  .notes-group {
+    display: none;
+  }
+  .notes-group.active {
+    display: block;
+  }
+
+  /* DESKTOP */
+  .notes-desktop {
+    display: none;
+    padding: 30px;
+  }
+  .notes-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+
+  /* MODAL */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s;
+  }
+  .modal.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal-content {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 65%;
+    background: #fff;
+    padding: 20px;
+    transform: translateY(100%);
+    transition: 0.4s;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .modal.active .modal-content {
+    transform: translateY(0);
+  }
+
+  .close-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  /* RESPONSIVE */
+  @media (min-width: 768px) {
+    .tabs,
+    .notes-mobile,
+    .view-all {
+      display: none;
+    }
+    .notes-desktop {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  function openModal() {
+    document.getElementById('notesModal').classList.add('active');
+  }
+
+  function closeModal() {
+    document.getElementById('notesModal').classList.remove('active');
+  }
+
+  // TAB LOGIC
+  document.querySelectorAll('.tab').forEach((tab) => {
+    tab.onclick = () => {
+      document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      document.querySelectorAll('.notes-group').forEach((g) => {
+        g.classList.remove('active');
+        if (g.id === tab.dataset.tab) g.classList.add('active');
+      });
+    };
+  });
+</script>

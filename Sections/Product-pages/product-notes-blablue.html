@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Notes</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    /* HEADER */
+    .notes-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px;
+    }
+
+    .view-all {
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 20px;
+      padding: 0 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .tab {
+      font-size: 12px;
+      opacity: 0.5;
+      cursor: pointer;
+      padding-bottom: 8px;
+    }
+
+    .tab.active {
+      opacity: 1;
+      border-bottom: 2px solid black;
+    }
+
+    /* MOBILE */
+    .notes-mobile {
+      padding: 15px;
+    }
+
+    .notes-items {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      text-align: center;
+    }
+
+    .notes-group {
+      display: none;
+    }
+
+    .notes-group.active {
+      display: block;
+    }
+
+    /* ================= MODAL ================= */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* SHARED ANIMATION */
+    .modal-content,
+    .close-wrapper {
+      position: absolute;
+      left: 0;
+      width: 100%;
+
+      transform: translateY(100%);
+      transition: transform 0.4s ease;
+    }
+
+    /* PANEL */
+    .modal-content {
+      bottom: 0;
+      height: 65%;
+      background: #fff;
+      padding: 20px;
+      border-radius: 16px 16px 0 0;
+      z-index: 2;
+    }
+
+    /* CLOSE BUTTON (ALIGNED TO PANEL) */
+    .close-wrapper {
+      bottom: 100%;
+      /* attach to top of modal */
+      margin-bottom: 10px;
+      /* spacing */
+      display: flex;
+      justify-content: center;
+      z-index: 3;
+    }
+
+    /* ACTIVE STATE */
+    .modal.show .modal-content,
+    .modal.show .close-wrapper {
+      transform: translateY(0);
+    }
+
+    .close {
+      background: black;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .modal-title {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+    }
+
+    /* RESPONSIVE */
+    @media(min-width:768px) {
+
+      .tabs,
+      .notes-mobile,
+      .view-all {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="notes-header">
+    <h2>NOTES</h2>
+    <span class="view-all">VIEW ALL →</span>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="head">HEAD</div>
+    <div class="tab" data-tab="heart">HEART</div>
+    <div class="tab" data-tab="base">BASE</div>
+  </div>
+
+  <div class="notes-mobile">
+    <div class="notes-group active" id="head">
+      <div class="notes-items">
+        <div><img src="./imgs/orange.jpg">
+          <p>Mandarin</p>
+        </div>
+        <div><img src="./imgs/pear.jpg">
+          <p>Pear</p>
+        </div>
+        <div><img src="./imgs/pepper.jpg">
+          <p>Pepper</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes-group" id="heart">
+      <div class="notes-items">
+        <div><img src="./imgs/orange.jpg">
+          <p>Rose</p>
+        </div>
+        <div><img src="./imgs/pear.jpg">
+          <p>Gardenia</p>
+        </div>
+        <div><img src="./imgs/pepper.jpg">
+          <p>Frangipani</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes-group" id="base">
+      <div class="notes-items">
+        <div><img src="./imgs/pear.jpg">
+          <p>Musk</p>
+        </div>
+        <div><img src="./imgs/orange.jpg">
+          <p>Patchouli</p>
+        </div>
+        <div><img src="./imgs/pepper.jpg">
+          <p>Cedar</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal">
+
+    <div class="modal-content">
+
+      <!-- CLOSE BUTTON ALIGNED WITH PANEL -->
+      <div class="close-wrapper">
+        <button class="close">X</button>
+      </div>
+
+      <h2 class="modal-title">PRODUCT NOTES</h2>
+
+      <div class="notes-items">
+        <div><img src="./imgs/orange.jpg">
+          <p>Mandarin</p>
+        </div>
+        <div><img src="./imgs/pear.jpg">
+          <p>Pear</p>
+        </div>
+        <div><img src="./imgs/pepper.jpg">
+          <p>Pepper</p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // TABS
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.onclick = () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        document.querySelectorAll('.notes-group').forEach(g => {
+          g.classList.remove('active');
+          if (g.id === tab.dataset.tab) g.classList.add('active');
+        });
+      };
+    });
+
+    // MODAL
+    const modal = document.getElementById('modal');
+    const modalContent = document.querySelector('.modal-content');
+
+    document.querySelector('.view-all').onclick = () => {
+      modal.classList.add('show');
+    };
+
+    function closeModal() {
+      modal.classList.remove('show');
+    }
+
+    document.querySelector('.close').onclick = closeModal;
+
+    // BACKDROP CLICK
+    modal.addEventListener('click', (e) => {
+      if (!modalContent.contains(e.target)) {
+        closeModal();
+      }
+    });
+  </script>
+
+</body>
+
+</html>

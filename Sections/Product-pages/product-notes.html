@@ -1,0 +1,429 @@
+<!-- -----------------------
+ --- import: product-notes.liquid ---
+------------------------- -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Notes</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    /* HEADER */
+    .notes-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+    }
+
+    .notes-header h2 {
+      font-size: 20px;
+    }
+
+    .view-all {
+      color: rgb(0, 0, 0);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* MOBILE TABS */
+    .tabs {
+      display: flex;
+      gap: 20px;
+      padding: 0 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .tab {
+      font-size: 12px;
+      cursor: pointer;
+      opacity: 0.5;
+      padding-bottom: 8px;
+    }
+
+    .tab.active {
+      opacity: 1;
+      border-bottom: 2px solid rgb(0, 0, 0);
+    }
+
+    /* MOBILE CONTENT */
+    .notes-mobile {
+      padding: 15px;
+    }
+
+    .notes-items {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      text-align: center;
+    }
+
+    .notes-items img {
+      width: 70px;
+    }
+
+    .notes-items p {
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .notes-group {
+      display: none;
+    }
+
+    .notes-group.active {
+      display: block;
+    }
+
+    /* DESKTOP */
+    .notes-desktop {
+      display: none;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .notes-desktop h2 {
+      font-size: 22px;
+      margin-bottom: 25px;
+    }
+
+    .notes-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+
+    .notes-col h3 {
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    /* MODAL FIXED */
+    .modal {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* SLIDE PANEL */
+    .modal-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 65%;
+      background: #fff;
+      padding: 20px;
+      overflow-y: auto;
+
+      transform: translateY(100%);
+      transition: transform 0.4s ease;
+
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+    }
+
+    .modal.active .modal-content {
+      transform: translateY(0);
+    }
+
+    /* FORCE CLOSE ANIMATION */
+    .modal.closing .modal-content {
+      transform: translateY(100%);
+    }
+
+    /* CLOSE BUTTON */
+    .close {
+      background: rgb(0, 0, 0);
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    .close-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .modal-title {
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #dbdbdb;
+    }
+
+    /* MOBILE FIX */
+    @media (max-width: 767px) {
+
+      .modal .notes-row {
+        display: flex;
+        flex-direction: column;
+        gap: 45px;
+      }
+
+      .modal .notes-items {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .modal .notes-items img {
+        width: 60px;
+      }
+
+      .modal .notes-items p {
+        font-size: 11px;
+      }
+    }
+
+    /* RESPONSIVE */
+    @media(min-width:768px) {
+
+      .tabs,
+      .notes-mobile,
+      .view-all {
+        display: none;
+      }
+
+      .notes-desktop {
+        display: block;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- MOBILE -->
+  <div class="notes-header">
+    <h2>NOTES</h2>
+    <span class="view-all">VIEW ALL →</span>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="head">HEAD</div>
+    <div class="tab" data-tab="heart">HEART</div>
+    <div class="tab" data-tab="base">BASE</div>
+  </div>
+
+  <div class="notes-mobile">
+
+    <div class="notes-group active" id="head">
+      <div class="notes-items">
+        <div><img src="./imgs/orange.jpg">
+          <p>Mandarin</p>
+        </div>
+        <div><img src="./imgs/pear.jpg">
+          <p>Pear</p>
+        </div>
+        <div><img src="./imgs/pepper.jpg">
+          <p>Pepper</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes-group" id="heart">
+      <div class="notes-items">
+        <div><img src="./imgs/orange.jpg">
+          <p>Rose</p>
+        </div>
+        <div><img src="./imgs/pear.jpg">
+          <p>Gardenia</p>
+        </div>
+        <div><img src="./imgs/pepper.jpg">
+          <p>Frangipani</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes-group" id="base">
+      <div class="notes-items">
+        <div><img src="./imgs/pear.jpg">
+          <p>Musk</p>
+        </div>
+        <div><img src="./imgs/orange.jpg">
+          <p>Patchouli</p>
+        </div>
+        <div><img src="./imgs/pepper.jpg">
+          <p>Cedar</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DESKTOP -->
+  <div class="notes-desktop">
+    <h2>NOTES</h2>
+
+    <div class="notes-row">
+      <div class="notes-col">
+        <h3>HEAD NOTES</h3>
+        <div class="notes-items">
+          <div><img src="./imgs/orange.jpg">
+            <p>Mandarin</p>
+          </div>
+          <div><img src="./imgs/pear.jpg">
+            <p>Pear</p>
+          </div>
+          <div><img src="./imgs/pepper.jpg">
+            <p>Pepper</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes-col">
+        <h3>HEART NOTES</h3>
+        <div class="notes-items">
+          <div><img src="./imgs/pear.jpg">
+            <p>Rose</p>
+          </div>
+          <div><img src="./imgs/pepper.jpg">
+            <p>Gardenia</p>
+          </div>
+          <div><img src="./imgs/orange.jpg">
+            <p>Frangipani</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes-col">
+        <h3>BASE NOTES</h3>
+        <div class="notes-items">
+          <div><img src="./imgs/pear.jpg">
+            <p>Musk</p>
+          </div>
+          <div><img src="./imgs/orange.jpg">
+            <p>Patchouli</p>
+          </div>
+          <div><img src="./imgs/pepper.jpg">
+            <p>Cedar</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal">
+
+    <div class="modal-content">
+      <div class="close-wrapper">
+        <h2 class="modal-title">PRODUCT NOTES</h2>
+        <button class="close">X</button>
+      </div>
+
+      <div class="notes-row">
+        <div class="notes-col">
+          <h3>HEAD</h3>
+          <div class="notes-items">
+            <div><img src="./imgs/orange.jpg">
+              <p>Mandarin</p>
+            </div>
+            <div><img src="./imgs/pear.jpg">
+              <p>Pear</p>
+            </div>
+            <div><img src="./imgs/pepper.jpg">
+              <p>Pepper</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="notes-col">
+          <h3>HEART</h3>
+          <div class="notes-items">
+            <div><img src="./imgs/pepper.jpg">
+              <p>Rose</p>
+            </div>
+            <div><img src="./imgs/pear.jpg">
+              <p>Gardenia</p>
+            </div>
+            <div><img src="./imgs/orange.jpg">
+              <p>Frangipani</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="notes-col">
+          <h3>BASE</h3>
+          <div class="notes-items">
+            <div><img src="./imgs/orange.jpg">
+              <p>Musk</p>
+            </div>
+            <div><img src="./imgs/pear.jpg">
+              <p>Patchouli</p>
+            </div>
+            <div><img src="./imgs/pepper.jpg">
+              <p>Cedar</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // TABS
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.onclick = () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        document.querySelectorAll('.notes-group').forEach(g => {
+          g.classList.remove('active');
+          if (g.id === tab.dataset.tab) g.classList.add('active');
+        });
+      };
+    });
+
+    // MODAL
+    const modal = document.getElementById('modal');
+    const modalContent = document.querySelector('.modal-content');
+
+    document.querySelector('.view-all').onclick = () => {
+      modal.classList.remove('closing');
+      modal.classList.add('active');
+    };
+
+    function closeModal() {
+      modal.classList.add('closing');
+
+      setTimeout(() => {
+        modal.classList.remove('active', 'closing');
+      }, 400);
+    }
+
+    document.querySelector('.close').onclick = closeModal;
+
+    // BACKDROP CLICK
+    modal.addEventListener('click', (e) => {
+      if (!modalContent.contains(e.target)) {
+        closeModal();
+      }
+    });
+  </script>
+
+</body>
+
+</html>
